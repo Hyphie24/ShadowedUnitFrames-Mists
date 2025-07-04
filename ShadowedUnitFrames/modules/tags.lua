@@ -1,5 +1,3 @@
-local GetSpellName = C_Spell.GetSpellName
-
 local Tags = {afkStatus = {}, offlineStatus = {}, customEvents = {}, powerMap = {}, moduleKey = "tags"}
 local tagPool, functionPool, temp, regFontStrings, powerMap = {}, {}, {}, {}, Tags.powerMap
 local L = ShadowUF.L
@@ -370,7 +368,7 @@ end
 
 -- Name abbreviation
 local function abbreviateName(text)
-	return (string.utf8sub or string.sub)(text, 1, 1) .. "."
+	return string.sub(text, 1, 1) .. "."
 end
 
 Tags.abbrevCache = setmetatable({}, {
@@ -382,14 +380,14 @@ end})
 
 -- Going to have to start using an env wrapper for tags I think
 local Druid = {}
-Druid.CatForm = GetSpellName(768)
-Druid.MoonkinForm = GetSpellName(24858)
-Druid.TravelForm = GetSpellName(783)
-Druid.BearForm = GetSpellName(5487)
-Druid.TreeForm = GetSpellName(33891)
-Druid.AquaticForm = GetSpellName(1066)
-Druid.SwiftFlightForm = GetSpellName(40120)
-Druid.FlightForm = GetSpellName(33943)
+Druid.CatForm = GetSpellInfo(768)
+Druid.MoonkinForm = GetSpellInfo(24858)
+Druid.TravelForm = GetSpellInfo(783)
+Druid.BearForm = GetSpellInfo(5487)
+Druid.TreeForm = GetSpellInfo(33891)
+Druid.AquaticForm = GetSpellInfo(1066)
+Druid.SwiftFlightForm = GetSpellInfo(40120)
+Druid.FlightForm = GetSpellInfo(33943)
 ShadowUF.Druid = Druid
 
 Tags.defaultTags = {
@@ -491,10 +489,6 @@ Tags.defaultTags = {
 
 		return state and state >= 3 and ShadowUF:Hex(GetThreatStatusColor(state))
 	end]],
-	--["unit:scaled:threat"] = [[function(unit, unitOwner, fontString)
-	--	local scaled = select(3, UnitDetailedThreatSituation(unit))
-	--	return scaled and string.format("%d%%", scaled)
-	--end]],
 	["scaled:threat"] = [[function(unit, unitOwner)
 		local scaled = select(3, UnitDetailedThreatSituation("player", "target"))
 		return scaled and string.format("%d%%", scaled)
@@ -696,11 +690,7 @@ Tags.defaultTags = {
 		return string.format("%s/%s", ShadowUF:SmartFormatNumber(power), ShadowUF:SmartFormatNumber(maxPower))
 	end]],
 	["levelcolor"] = [[function(unit, unitOwner)
-		if( UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) ) then
-			return nil
-		end
-
-		local level = UnitLevel(unit) or 0
+		local level = UnitLevel(unit)
 		if( level < 0 and UnitClassification(unit) == "worldboss" ) then
 			return nil
 		end
@@ -718,11 +708,7 @@ Tags.defaultTags = {
 	end]],
 	["faction"] = [[function(unit, unitOwner) return UnitFactionGroup(unitOwner) end]],
 	["level"] = [[function(unit, unitOwner)
-		if( UnitIsWildBattlePet(unit) or UnitIsBattlePetCompanion(unit) ) then
-			return UnitBattlePetLevel(unit)
-		end
-
-		local level = UnitLevel(unit) or 0
+		local level = UnitLevel(unit)
 		return level > 0 and level or UnitClassification(unit) ~= "worldboss" and "??" or nil
 	end]],
 	["maxhp"] = [[function(unit, unitOwner) return ShadowUF:FormatLargeNumber(UnitHealthMax(unit)) end]],
@@ -806,6 +792,9 @@ Tags.defaultTags = {
 			return ShadowUF.L["Offline"]
 		end
 	end]],
+	["cpoints"] = [[function(unit, unitOwner)
+		return UnitPower("player", Enum.PowerType.ComboPoints)
+	end]],
 	["sshards"] = [[function(unit, unitOwner)
 		local points = UnitPower(ShadowUF.playerUnit, Enum.PowerType.SoulShards)
 		return points and points > 0 and points
@@ -813,22 +802,6 @@ Tags.defaultTags = {
 	["hpower"] = [[function(unit, unitOwner)
 		local points = UnitPower(ShadowUF.playerUnit, Enum.PowerType.HolyPower)
 		return points and points > 0 and points
-	end]],
-	["monk:chipoints"] = [[function(unit, unitOwner)
-		local points = UnitPower(ShadowUF.playerUnit, Enum.PowerType.Chi)
-		return points and points > 0 and points
-	end]],
-	["cpoints"] = [[function(unit, unitOwner)
-		if( UnitHasVehicleUI("player") and UnitHasVehiclePlayerFrameUI("player") ) then
-			local points = GetComboPoints("vehicle")
-			if( points == 0 ) then
-				points = GetComboPoints("vehicle", "vehicle")
-			end
-
-			return points
-		else
-			return UnitPower("player", Enum.PowerType.ComboPoints)
-		end
 	end]],
 	["smartlevel"] = [[function(unit, unitOwner)
 		local classif = UnitClassification(unit)
@@ -988,51 +961,6 @@ Tags.defaultTags = {
 
 		return UnitPower(unit, Enum.PowerType.Mana)
 	end]],
-	["per:incheal"] = [[function(unit, unitOwner, fontString)
-		local heal = UnitGetIncomingHeals(unit)
-		local maxHealth = UnitHealthMax(unit)
-		return heal and heal > 0 and maxHealth > 0 and string.format("%d%%", (heal / maxHealth) * 100)
-	end]],
-	["abs:incheal"] = [[function(unit, unitOwner, fontString)
-	    local heal = UnitGetIncomingHeals(unit)
-		return heal and heal > 0 and string.format("%d", heal)
-	end]],
-	["incheal"] = [[function(unit, unitOwner, fontString)
-	    local heal = UnitGetIncomingHeals(unit)
-		return heal and heal > 0 and ShadowUF:FormatLargeNumber(heal)
-	end]],
-	["incheal:name"] = [[function(unit, unitOwner, fontString)
-	    local heal = UnitGetIncomingHeals(unit)
-		return heal and heal > 0 and string.format("+%d", heal) or ShadowUF.tagFunc.name(unit, unitOwner, fontString)
-	end]],
-	["monk:abs:stagger"] = [[function(unit, unitOwner)
-		local stagger = UnitStagger(unit)
-		return stagger and stagger > 0 and stagger
-	end]],
-	["monk:stagger"] = [[function(unit, unitOwner)
-		local stagger = UnitStagger(unit)
-		return stagger and stagger > 0 and ShadowUF:FormatLargeNumber(stagger)
-	end]],
-	["abs:incabsorb"] = [[function(unit, unitOwner, fontString)
-	    local absorb = UnitGetTotalAbsorbs(unit)
-		return absorb and absorb > 0 and absorb
-	end]],
-	["incabsorb"] = [[function(unit, unitOwner, fontString)
-	    local absorb = UnitGetTotalAbsorbs(unit)
-		return absorb and absorb > 0 and ShadowUF:FormatLargeNumber(absorb)
-	end]],
-	["incabsorb:name"] = [[function(unit, unitOwner, fontString)
-	    local absorb = UnitGetTotalAbsorbs(unit)
-		return absorb and absorb > 0 and string.format("+%d", absorb) or ShadowUF.tagFunc.name(unit, unitOwner, fontString)
-	end]],
-	["abs:healabsorb"] = [[function(unit, unitOwner, fontString)
-	    local absorb = UnitGetTotalHealAbsorbs(unit)
-		return absorb and absorb > 0 and absorb
-	end]],
-	["healabsorb"] = [[function(unit, unitOwner, fontString)
-	    local absorb = UnitGetTotalHealAbsorbs(unit)
-		return absorb and absorb > 0 and ShadowUF:FormatLargeNumber(absorb)
-	end]],
 	["unit:raid:targeting"] = [[function(unit, unitOwner, fontString)
 		if( GetNumGroupMembers() == 0 ) then return nil end
 		local guid = UnitGUID(unit)
@@ -1067,19 +995,10 @@ Tags.defaultTags = {
 Tags.defaultEvents = {
 	["totem:timer"]				= "SUF_TOTEM_TIMER",
 	["rune:timer"]				= "SUF_RUNE_TIMER",
-	["hp:color"]				= "UNIT_HEALTH UNIT_MAXHEALTH",
+	["hp:color"]				= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH",
 	["short:druidform"]			= "UNIT_AURA",
 	["druidform"]				= "UNIT_AURA",
 	["guild"]					= "UNIT_NAME_UPDATE",
-	["per:incheal"]				= "UNIT_HEAL_PREDICTION",
-	["abs:incheal"]				= "UNIT_HEAL_PREDICTION",
-	["incheal:name"]			= "UNIT_HEAL_PREDICTION",
-	["incheal"]					= "UNIT_HEAL_PREDICTION",
-	["abs:incabsorb"]			= "UNIT_ABSORB_AMOUNT_CHANGED",
-	["incabsorb"]				= "UNIT_ABSORB_AMOUNT_CHANGED",
-	["incabsorb:name"]			= "UNIT_ABSORB_AMOUNT_CHANGED",
-	["abs:healabsorb"]			= "UNIT_HEAL_ABSORB_AMOUNT_CHANGED",
-	["healabsorb"]				= "UNIT_HEAL_ABSORB_AMOUNT_CHANGED",
 	-- ["crtabs"]				= "CRTABS",
 	-- ["abs:crtabs"]			= "CRTABS",
 	-- ["crtabs:name"]			= "CRTABS",
@@ -1087,11 +1006,11 @@ Tags.defaultEvents = {
 	["afk:time"]				= "PLAYER_FLAGS_CHANGED UNIT_CONNECTION",
 	["status:time"]				= "UNIT_POWER_FREQUENT UNIT_CONNECTION",
 	["pvp:time"]				= "PLAYER_FLAGS_CHANGED",
-	["curhp"]               	= "UNIT_HEALTH UNIT_CONNECTION",
-	["abscurhp"]				= "UNIT_HEALTH UNIT_CONNECTION",
-	["curmaxhp"]				= "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION",
-	["absolutehp"]				= "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION",
-	["smart:curmaxhp"]			= "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION",
+	["curhp"]               	= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_CONNECTION",
+	["abscurhp"]				= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_CONNECTION",
+	["curmaxhp"]				= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION",
+	["absolutehp"]				= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION",
+	["smart:curmaxhp"]			= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION",
 	["curpp"]               	= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT",
 	["abscurpp"]            	= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["curmaxpp"]				= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
@@ -1110,25 +1029,25 @@ Tags.defaultEvents = {
 	["level"]               	= "UNIT_LEVEL UNIT_FACTION PLAYER_LEVEL_UP",
 	["levelcolor"]				= "UNIT_LEVEL UNIT_FACTION PLAYER_LEVEL_UP",
 	["maxhp"]               	= "UNIT_MAXHEALTH",
-	["def:name"]				= "UNIT_NAME_UPDATE UNIT_MAXHEALTH UNIT_HEALTH",
+	["def:name"]				= "UNIT_NAME_UPDATE UNIT_MAXHEALTH UNIT_HEALTH UNIT_HEALTH_FREQUENT",
 	["absmaxhp"]				= "UNIT_MAXHEALTH",
 	["maxpp"]               	= "SUF_POWERTYPE:CURRENT UNIT_MAXPOWER",
 	["absmaxpp"]				= "SUF_POWERTYPE:CURRENT UNIT_MAXPOWER",
-	["missinghp"]           	= "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION",
+	["missinghp"]           	= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION",
 	["missingpp"]           	= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["name"]                	= "UNIT_NAME_UPDATE",
 	["abbrev:name"]				= "UNIT_NAME_UPDATE",
 	["server"]					= "UNIT_NAME_UPDATE",
 	["colorname"]				= "UNIT_NAME_UPDATE",
-	["perhp"]               	= "UNIT_HEALTH UNIT_MAXHEALTH UNIT_CONNECTION",
+	["perhp"]               	= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION",
 	["perpp"]               	= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_CONNECTION",
-	["status"]              	= "UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION",
+	["status"]              	= "UNIT_HEALTH UNIT_HEALTH_FREQUENT PLAYER_UPDATE_RESTING UNIT_CONNECTION",
 	["smartlevel"]          	= "UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED",
 	["cpoints"]             	= "UNIT_POWER_FREQUENT PLAYER_TARGET_CHANGED",
 	["rare"]                	= "UNIT_CLASSIFICATION_CHANGED",
 	["classification"]      	= "UNIT_CLASSIFICATION_CHANGED",
 	["shortclassification"] 	= "UNIT_CLASSIFICATION_CHANGED",
-	["dechp"]					= "UNIT_HEALTH UNIT_MAXHEALTH",
+	["dechp"]					= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH",
 	["group"]					= "GROUP_ROSTER_UPDATE",
 	["unit:color:aggro"]		= "UNIT_THREAT_SITUATION_UPDATE",
 	["color:aggro"]				= "UNIT_THREAT_SITUATION_UPDATE",
@@ -1140,7 +1059,6 @@ Tags.defaultEvents = {
 	["unit:scaled:threat"]		= "UNIT_THREAT_SITUATION_UPDATE",
 	["unit:color:sit"]			= "UNIT_THREAT_SITUATION_UPDATE",
 	["unit:situation"]			= "UNIT_THREAT_SITUATION_UPDATE",
-	["monk:chipoints"]			= "SUF_POWERTYPE:LIGHT_FORCE UNIT_POWER_FREQUENT",
 }
 
 -- Default update frequencies for tag updating, used if it's needed to override the update speed
@@ -1154,8 +1072,6 @@ Tags.defaultFrequents = {
 	["unit:scaled:threat"] = 1,
 	["unit:raid:targeting"] = 0.50,
 	["unit:raid:assist"] = 0.50,
-	["monk:stagger"] = 0.25,
-	["monk:abs:stagger"] = 0.25
 }
 
 -- Default tag categories
@@ -1163,13 +1079,6 @@ Tags.defaultCategories = {
 	["totem:timer"]				= "classtimer",
 	["rune:timer"]				= "classtimer",
 	["hp:color"]				= "health",
-	["abs:incabsorb"]			= "health",
-	["incabsorb"]				= "health",
-	["incabsorb:name"]			= "health",
-	["per:incheal"]				= "health",
-	["abs:incheal"]				= "health",
-	["incheal"]					= "health",
-	["incheal:name"]			= "health",
 	["smart:curmaxhp"]			= "health",
 	["smart:curmaxpp"]			= "health",
 	["afk"]						= "status",
@@ -1243,9 +1152,6 @@ Tags.defaultCategories = {
 	["unit:color:aggro"]		= "threat",
 	["unit:raid:assist"]		= "raid",
 	["unit:raid:targeting"] 	= "raid",
-	["monk:chipoints"]			= "classspec",
-	["monk:stagger"]			= "classspec",
-	["monk:abs:stagger"]		= "classspec"
 }
 
 -- Default tag help
@@ -1259,12 +1165,6 @@ Tags.defaultHelp = {
 	["guild"]					= L["Show's the units guild name if they are in a guild."],
 	["short:druidform"]			= L["Short version of [druidform], C = Cat, B = Bear, F = Flight and so on."],
 	["druidform"]				= L["Returns the units current form if they are a druid, Cat for Cat Form, Moonkin for Moonkin and so on."],
-	["per:incheal"]				= L["Percent of the players current health that's being healed, if they have 100,000 total health and 15,000 is incoming then 15% is shown."],
-	["abs:incheal"]				= L["Absolute incoming heal value, if 10,000 healing is incoming it will show 10,000."],
-	["incheal"]					= L["Shorten incoming heal value, if 13,000 healing is incoming it will show 13k."],
-	["abs:healabsorb"]			= L["Absolute heal absorb value, if 16,000 healing will be absorbed, it will show 16,000."],
-	["healabsorb"]				= L["Shorten heal absorb value, if 17,000 healing will be absorbed, it will show 17k."],
-	["incheal:name"]			= L["If the unit has heals incoming, it will show the absolute incoming heal value, otherwise it will show the units name."],
 	["smart:curmaxhp"]			= L["Smart number formating for [curmaxhp], numbers below 1,000,000 are left as is, numbers above 1,000,000 will use the short version such as 1m."],
 	["smart:curmaxpp"]			= L["Smart number formating for [curmaxpp], numbers below 1,000,000 are left as is, numbers above 1,000,000 will use the short version such as 1m."],
 	["pvp:time"]				= L["Shows how long until your PVP flag drops, will not show if the flag is manually on or you are in a hostile zone.|n|nThis will only work for yourself, you cannot use it to see the time left on your party or raid."],
@@ -1335,9 +1235,6 @@ Tags.defaultHelp = {
 	["color:aggro"]				= L["Same as [color:sit] except it only returns red if you have aggro, rather than transiting from yellow -> orange -> red."],
 	["unit:raid:targeting"]		= L["How many people in your raid are targeting the unit, for example if you put this on yourself it will show how many people are targeting you. This includes you in the count!"],
 	["unit:raid:assist"]		= L["How many people are assisting the unit, for example if you put this on yourself it will show how many people are targeting your target. This includes you in the count!"],
-	["monk:chipoints"]			= L["How many Chi points you currently have."],
-	["monk:stagger"]			= L["Shows the current staggered damage, if 12,000 damage is staggered, shows 12k."],
-	["monk:abs:stagger"]		= L["Shows the absolute staggered damage, if 16,000 damage is staggered, shows 16,000."]
 }
 
 Tags.defaultNames = {
@@ -1426,9 +1323,6 @@ Tags.defaultNames = {
 	["unit:color:aggro"]		= L["Unit color code on aggro"],
 	["unit:raid:targeting"]		= L["Raid targeting unit"],
 	["unit:raid:assist"]		= L["Raid assisting unit"],
-	["monk:chipoints"]			= L["Chi Points"],
-	["monk:stagger"]			= L["Stagger (Monk)"],
-	["monk:abs:stagger"]		= L["Stagger (Monk/Absolute)"]
 }
 
 -- List of event types
@@ -1436,6 +1330,7 @@ Tags.eventType = {
 	["UNIT_POWER_FREQUENT"] = "power",
 	["UNIT_MAXPOWER"] = "power",
 	["UNIT_ABSORB_AMOUNT_CHANGED"] = "health",
+	["UNIT_HEALTH_FREQUENT"] = "health",
 	["UNIT_HEALTH"] = "health",
 	["UNIT_MAXHEALTH"] = "health",
 	["GROUP_ROSTER_UPDATE"] = "unitless",
@@ -1482,18 +1377,17 @@ local function loadAPIEvents()
 	Tags.APIEvents = {
 		["InCombatLockdown"]		= "PLAYER_REGEN_ENABLED PLAYER_REGEN_DISABLED",
 		["UnitLevel"]				= "UNIT_LEVEL UNIT_FACTION",
-		["UnitBattlePetLevel"]		= "UNIT_LEVEL UNIT_FACTION",
 		["UnitName"]				= "UNIT_NAME_UPDATE",
 		["UnitClassification"]		= "UNIT_CLASSIFICATION_CHANGED",
 		["UnitFactionGroup"]		= "UNIT_FACTION PLAYER_FLAGS_CHANGED",
-		["UnitHealth%("]			= "UNIT_HEALTH",
+		["UnitHealth%("]			= "UNIT_HEALTH UNIT_HEALTH_FREQUENT",
 		["UnitHealthMax"]			= "UNIT_MAXHEALTH",
 		["UnitPower%("]				= "UNIT_POWER_FREQUENT",
 		["UnitPowerMax"]			= "UNIT_MAXPOWER",
 		["UnitPowerType"]			= "UNIT_DISPLAYPOWER",
-		["UnitIsDead"]				= "UNIT_HEALTH",
-		["UnitIsGhost"]				= "UNIT_HEALTH",
-		["UnitIsConnected"]			= "UNIT_HEALTH UNIT_CONNECTION",
+		["UnitIsDead"]				= "UNIT_HEALTH UNIT_HEALTH_FREQUENT",
+		["UnitIsGhost"]				= "UNIT_HEALTH UNIT_HEALTH_FREQUENT",
+		["UnitIsConnected"]			= "UNIT_HEALTH UNIT_HEALTH_FREQUENT UNIT_CONNECTION",
 		["UnitIsAFK"]				= "PLAYER_FLAGS_CHANGED",
 		["UnitIsDND"]				= "PLAYER_FLAGS_CHANGED",
 		["UnitIsPVP"]				= "PLAYER_FLAGS_CHANGED UNIT_FACTION",
@@ -1501,10 +1395,9 @@ local function loadAPIEvents()
 		["UnitIsPVPFreeForAll"]		= "PLAYER_FLAGS_CHANGED UNIT_FACTION",
 		["UnitCastingInfo"]			= "UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_DELAYED",
 		["UnitChannelInfo"]			= "UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP UNIT_SPELLCAST_CHANNEL_INTERRUPTED UNIT_SPELLCAST_CHANNEL_UPDATE",
-		["GetAuraDataByIndex"]		= "UNIT_AURA",
-		["GetBuffDataByIndex"]		= "UNIT_AURA",
-		["GetDebuffDataByIndex"]	= "UNIT_AURA",
-		["UnitAuraBySpell"]			= "UNIT_AURA",
+		["UnitAura"]				= "UNIT_AURA",
+		["UnitBuff"]				= "UNIT_AURA",
+		["UnitDebuff"]				= "UNIT_AURA",
 		["UnitXPMax"]				= "UNIT_PET_EXPERIENCE PLAYER_XP_UPDATE PLAYER_LEVEL_UP",
 		["UnitGetTotalAbsorbs"]		= "UNIT_ABSORB_AMOUNT_CHANGED",
 		["UnitXP%("]				= "UNIT_PET_EXPERIENCE PLAYER_XP_UPDATE PLAYER_LEVEL_UP",
@@ -1573,7 +1466,7 @@ end
 
 
 -- Checker function, makes sure tags are all happy
---[==[@debug@
+---[==[@debug@
 function Tags:Verify()
 	local fine = true
 	for tag, events in pairs(self.defaultEvents) do
@@ -1618,4 +1511,4 @@ function Tags:Verify()
 		print("Verified tags, everything is fine.")
 	end
 end
---@end-debug@]==]
+---@end-debug@]==]

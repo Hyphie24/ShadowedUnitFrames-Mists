@@ -1,4 +1,5 @@
 local Runes = {}
+
 ShadowUF:RegisterModule(Runes, "runeBar", ShadowUF.L["Rune bar"], true, "DEATHKNIGHT")
 ShadowUF.BlockTimers:Inject(Runes, "RUNE_TIMER")
 ShadowUF.DynamicBlocks:Inject(Runes)
@@ -11,21 +12,22 @@ function Runes:OnEnable(frame)
 		frame.runeBar.runes = {}
 		frame.runeBar.blocks = frame.runeBar.runes
 
-		for id=1, 6 do
-			local rune = ShadowUF.Units:CreateBar(frame.runeBar)
-			rune.id = id
+        for i = 1, 6 do
+            local rune = ShadowUF.Units:CreateBar(frame.runeBar)
+            rune.id = i
 
-			if( id > 1 ) then
-				rune:SetPoint("TOPLEFT", frame.runeBar.runes[id-1], "TOPRIGHT", 1, 0)
-			else
-				rune:SetPoint("TOPLEFT", frame.runeBar, "TOPLEFT", 0, 0)
-			end
+            if( i > 1 ) then
+				rune:SetPoint("TOPLEFT", frame.runeBar.runes[i-1], "TOPRIGHT", 1, 0)
+            else
+                rune:SetPoint("TOPLEFT", frame.runeBar, "TOPLEFT", 0, 0)
+            end
 
-			frame.runeBar.runes[id] = rune
-		end
+            frame.runeBar.runes[i] = rune
+        end
 	end
 
 	frame:RegisterNormalEvent("RUNE_POWER_UPDATE", self, "UpdateUsable")
+	frame:RegisterNormalEvent("RUNE_TYPE_UPDATE", self, "UpdateType")
 	frame:RegisterUpdateFunc(self, "UpdateUsable")
 end
 
@@ -37,7 +39,7 @@ function Runes:OnLayoutApplied(frame)
 	if( not frame.visibility.runeBar ) then return end
 
 	local barWidth = (frame.runeBar:GetWidth() - 5) / 6
-	for id, rune in pairs(frame.runeBar.runes) do
+	for runeNumber, rune in pairs(frame.runeBar.runes) do
 		if( ShadowUF.db.profile.units[frame.unitType].runeBar.background ) then
 			rune.background:Show()
 		else
@@ -50,8 +52,8 @@ function Runes:OnLayoutApplied(frame)
 		rune:GetStatusBarTexture():SetHorizTile(false)
 		rune:SetWidth(barWidth)
 
-		local color = ShadowUF.db.profile.powerColors.RUNES
-		frame:SetBlockColor(rune, "runeBar", color.r, color.g, color.b)
+		frame:SetBlockColor(rune, "runeBar", 0.5, 0.5, 0.5)
+        self:UpdateType(frame, "RUNE_TYPE_UPDATE", runeNumber)
 	end
 end
 
@@ -72,13 +74,20 @@ local function runeMonitor(self, elapsed)
 end
 
 -- Updates the timers on runes
-function Runes:UpdateUsable(frame, event, id, usable)
-	if( not id or not frame.runeBar.runes[id] ) then
+function Runes:UpdateUsable(frame, event, runeNumber, usable)
+    local order = {1, 2, 5, 6, 3, 4}
+	if( not runeNumber or not order[runeNumber] ) then
 		return
 	end
 
-	local rune = frame.runeBar.runes[id]
-	local startTime, cooldown, cooled = GetRuneCooldown(id)
+    local index = order[runeNumber]
+	if( not index or not frame.runeBar.runes[index] ) then
+		return
+	end
+
+	local rune = frame.runeBar.runes[index]
+
+	local startTime, cooldown, cooled = GetRuneCooldown(runeNumber)
 	-- Blizzard changed something with this API apparently and now it can be true/false/nil
 	if( cooled == nil ) then return end
 
@@ -99,4 +108,38 @@ function Runes:UpdateUsable(frame, event, id, usable)
 	if( rune.fontString ) then
 		rune.fontString:UpdateTags()
 	end
+
+    self:UpdateType(frame, event, runeNumber)
+end
+
+-- Updates the color
+function Runes:UpdateType(frame, event, runeNumber, ...)
+	if( not runeNumber or not frame.runeBar.runes[runeNumber] ) then
+		return
+	end
+
+	local rune = frame.runeBar.runes[runeNumber]
+
+    -- Colorize by rune type
+    local runeType = GetRuneType(runeNumber)
+    -- RUNETYPE_BLOOD
+    if(runeType == 1) then
+        local color = ShadowUF.db.profile.powerColors.RUNES_BLOOD
+        frame:SetBlockColor(rune, "runeBar", color.r, color.g, color.b)
+    end
+    -- RUNETYPE_CHROMATIC ("CHROMATIC" refers to Unholy runes)
+    if(runeType == 2) then
+        local color = ShadowUF.db.profile.powerColors.RUNES_UNHOLY
+        frame:SetBlockColor(rune, "runeBar", color.r, color.g, color.b)
+    end
+    -- RUNETYPE_FROST
+    if(runeType == 3) then
+        local color = ShadowUF.db.profile.powerColors.RUNES_FROST
+        frame:SetBlockColor(rune, "runeBar", color.r, color.g, color.b)
+    end
+    -- RUNETYPE_DEATH
+    if(runeType == 4) then
+        local color = ShadowUF.db.profile.powerColors.RUNES_DEATH
+        frame:SetBlockColor(rune, "runeBar", color.r, color.g, color.b)
+    end
 end

@@ -27,22 +27,13 @@ local function createConfigEnv()
 		UnitIsUnit = function(unitA, unitB) return unitB == "player" and true or false end,
 		UnitIsDeadOrGhost = function(unit) return false end,
 		UnitIsConnected = function(unit) return true end,
-		UnitLevel = function(unit) return GetMaxLevelForPlayerExpansion() end,
+		UnitLevel = function(unit) return MAX_PLAYER_LEVEL end,
 		UnitIsPlayer = function(unit) return unit ~= "boss" and unit ~= "pet" and not string.match(unit, "(%w+)pet") end,
 		UnitHealth = function(unit) return getValue("UnitHealth", unit, math.random(20000, 50000)) end,
 		UnitIsQuestBoss = function(unit) return unit == "target" or unit == "focus" end,
-		UnitIsWildBattlePet = function(unit) return unit == "target" or unit == "focus" end,
-		UnitBattlePetType = function(unit)
-			if( unit == "target" or unit == "focus" ) then
-				return getValue("UnitBattlePetType", unit, math.random(#(PET_TYPE_SUFFIX)))
-			end
-		end,
-		GetArenaOpponentSpec = function(unitID)
-			return getValue("GetArenaOpponentSpec", unitID, math.random(250, 270))
-		end,
 		UnitHealthMax = function(unit) return 50000 end,
 		UnitPower = function(unit, powerType)
-			if( powerType == Enum.PowerType.HolyPower or powerType == Enum.PowerType.SoulShards or powerType == Enum.PowerType.Essence ) then
+			if( powerType == Enum.PowerType.HolyPower or powerType == Enum.PowerType.SoulShards ) then
 				return 3
 			elseif( powerType == Enum.PowerType.Chi) then
 				return 4
@@ -67,7 +58,7 @@ local function createConfigEnv()
 			elseif( powerType == Enum.PowerType.Focus ) then
 				return 120
 			elseif( powerType == Enum.PowerType.ComboPoints or powerType == Enum.PowerType.SoulShards or powerType == Enum.PowerType.HolyPower
-			     or powerType == Enum.PowerType.Chi or powerType == Enum.PowerType.Essence ) then
+			     or powerType == Enum.PowerType.Chi or powerType == Enum.PowerType.BurningEmbers) then
 				return 5
 			elseif( powerType == Enum.PowerType.Runes ) then
 				return 6
@@ -79,7 +70,7 @@ local function createConfigEnv()
 		end,
 		UnitHasIncomingResurrection = function(unit) return true end,
 		UnitInOtherParty = function(unit) return getValue("UnitInOtherParty", unit, math.random(0, 1) == 1) end,
-		UnitPhaseReason = function(unit) return nil end,
+		UnitInPhase = function(unit) return false end,
 		UnitExists = function(unit) return true end,
 		UnitIsGroupLeader = function() return true end,
 		UnitIsPVP = function(unit) return true end,

@@ -154,8 +154,6 @@ SML:Register(SML.MediaType.BORDER, "Square Clean", "Interface\\AddOns\\ShadowedU
 SML:Register(SML.MediaType.BACKGROUND, "Chat Frame", "Interface\\ChatFrame\\ChatFrameBackground")
 SML:Register(SML.MediaType.STATUSBAR, "BantoBar", "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\banto")
 SML:Register(SML.MediaType.STATUSBAR, "Smooth",   "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\smooth")
-SML:Register(SML.MediaType.STATUSBAR, "Smooth v2","Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\Smoothv2")
-SML:Register(SML.MediaType.STATUSBAR, "Smoother", "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\smoother")
 SML:Register(SML.MediaType.STATUSBAR, "Perl",     "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\perl")
 SML:Register(SML.MediaType.STATUSBAR, "Glaze",    "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\glaze")
 SML:Register(SML.MediaType.STATUSBAR, "Charcoal", "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\Charcoal")
@@ -320,8 +318,7 @@ end
 -- Setup the main frame
 function Layout:SetupFrame(frame, config)
 	local backdrop = ShadowUF.db.profile.backdrop
-	frame.backdropInfo = backdropTbl
-	frame:ApplyBackdrop()
+	frame:SetBackdrop(backdropTbl)
 	frame:SetBackdropColor(backdrop.backgroundColor.r, backdrop.backgroundColor.g, backdrop.backgroundColor.b, backdrop.backgroundColor.a)
 	frame:SetBackdropBorderColor(backdrop.borderColor.r, backdrop.borderColor.g, backdrop.borderColor.b, backdrop.borderColor.a)
 
@@ -479,7 +476,7 @@ function Layout:SetupText(frame, config)
 	for _, fontString in pairs(frame.fontStrings) do
 		local id = fontString.configID
 		if( fontString:IsShown() ) then
-			--fontString:SetWidth(fontString.availableWidth * (config.text[id].width / totalWeight[fontString.widthID]))
+			fontString:SetWidth(fontString.availableWidth * (config.text[id].width / totalWeight[fontString.widthID]))
 			fontString:SetHeight(ShadowUF.db.profile.font.size + 1)
 
 			frame:RegisterUpdateFunc(fontString, "UpdateTags")

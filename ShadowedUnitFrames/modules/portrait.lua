@@ -65,12 +65,8 @@ function Portrait:Update(frame, event)
 	if( type == "class" ) then
 		local classToken = frame:UnitClassToken()
 		if( classToken ) then
-			local classIconAtlas = GetClassAtlas(classToken)
-			if( classIconAtlas ) then
-				frame.portrait:SetAtlas(classIconAtlas)
-			else
-				frame.portrait:SetTexture("")
-			end
+			frame.portrait:SetTexture("Interface\\Glues\\CharacterCreate\\UI-CharacterCreate-Classes")
+			frame.portrait:SetTexCoord(CLASS_ICON_TCOORDS[classToken][1], CLASS_ICON_TCOORDS[classToken][2], CLASS_ICON_TCOORDS[classToken][3], CLASS_ICON_TCOORDS[classToken][4])
 		else
 			frame.portrait:SetTexture("")
 		end

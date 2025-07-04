@@ -1,8 +1,9 @@
 if( not ShadowUF.ComboPoints ) then return end
+if select(4, GetBuildInfo()) < 40400 then return end
 
 local HolyPower = setmetatable({}, {__index = ShadowUF.ComboPoints})
-ShadowUF:RegisterModule(HolyPower, "holyPower", ShadowUF.L["Holy Power"], nil, "PALADIN")
-local holyConfig = {max = 5, key = "holyPower", colorKey = "HOLYPOWER", powerType = Enum.PowerType.HolyPower, eventType = "HOLY_POWER", icon = "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\combo"}
+ShadowUF:RegisterModule(HolyPower, "holyPower", ShadowUF.L["Holy Power"], nil, "PALADIN", nil, PALADINPOWERBAR_SHOW_LEVEL)
+local holyConfig = {max = 3, key = "holyPower", colorKey = "HOLYPOWER", powerType = Enum.PowerType.HolyPower, eventType = "HOLY_POWER", icon = "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\combo"}
 
 function HolyPower:OnEnable(frame)
 	frame.holyPower = frame.holyPower or CreateFrame("Frame", nil, frame)
