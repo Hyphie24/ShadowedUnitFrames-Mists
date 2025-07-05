@@ -58,7 +58,7 @@ local function createConfigEnv()
 			elseif( powerType == Enum.PowerType.Focus ) then
 				return 120
 			elseif( powerType == Enum.PowerType.ComboPoints or powerType == Enum.PowerType.SoulShards or powerType == Enum.PowerType.HolyPower
-			     or powerType == Enum.PowerType.Chi ) then
+			     or powerType == Enum.PowerType.Chi or powerType == Enum.PowerType.BurningEmbers) then
 				return 5
 			elseif( powerType == Enum.PowerType.Runes ) then
 				return 6

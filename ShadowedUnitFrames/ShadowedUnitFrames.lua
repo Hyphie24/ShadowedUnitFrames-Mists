@@ -6,7 +6,7 @@ ShadowUF = select(2, ...)
 
 local L = ShadowUF.L
 ShadowUF.dbRevision = 61
-ShadowUF.dbRevisionClassic = 6
+ShadowUF.dbRevisionClassic = 20
 ShadowUF.playerUnit = "player"
 ShadowUF.enabledUnits = {}
 ShadowUF.modules = {}
@@ -118,6 +118,71 @@ end
 function ShadowUF:CheckUpgrade()
 	local revisionClassic = self.db.profile.revisionClassic or (self.db.profile.revision and 1 or self.dbRevisionClassic)
 	local revision = self.db.profile.revision or self.dbRevision
+	if( revisionClassic <= 20 ) then
+		self.db.profile.powerColors["ALTERNATE"] = {r = 0.71, g = 0.0, b = 1.0}
+		
+		for _, unit in pairs(self.unitList) do
+			self.db.profile.units[unit].altPowerBar.enabled = true
+			self.db.profile.units[unit].altPowerBar.background = true
+			self.db.profile.units[unit].altPowerBar.height = 0.40
+			self.db.profile.units[unit].altPowerBar.order = 100
+		end
+	end
+	
+	if( revisionClassic <= 19 ) then
+		self.db.profile.units.pet.altPowerBar.enabled = true
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[warlock:demonic:curpp]", anchorTo = "$demonicFuryBar", anchorPoint = "C", size = -1, x = 0, y = 0})
+	end
+
+	if( revisionClassic <= 18 ) then
+		self.db.profile.powerColors["MUSHROOMS"] = {r = 0.20, g = 0.90, b = 0.20}
+		self.db.profile.powerColors["STATUE"] = {r = 0.35, g = 0.45, b = 0.60}
+	end
+
+	if( revisionClassic <= 17 ) then
+		self.db.profile.units.target.indicators.petBattle = {enabled = true, anchorPoint = "BL", size = 18, x = -6, y = 14, anchorTo = "$parent"}
+		self.db.profile.units.focus.indicators.petBattle = {enabled = false, anchorPoint = "BL", size = 18, x = -6, y = 12, anchorTo = "$parent"}
+		self.db.profile.units.party.indicators.phase = {enabled = true}
+	end
+
+	if( revisionClassic <= 16 ) then
+		self.db.profile.units.target.indicators.questBoss = {enabled = true, anchorPoint = "BR", size = 22, x = 9, y = 24, anchorTo = "$parent"}
+		self.db.profile.units.focus.indicators.questBoss = {enabled = false, anchorPoint = "BR", size = 22, x = 7, y = 14, anchorTo = "$parent"}
+	end
+
+	if( revisionClassic <= 15 ) then
+		self.db.profile.powerColors["DEMONICFURY"] = {r = 0.58, g = 0.51, b = 0.79}
+		self.db.profile.powerColors["BURNINGEMBERS"] = {r = 0.58, g = 0.51, b = 0.79}
+		self.db.profile.powerColors["FULLBURNINGEMBER"] = {r = 0.88, g = 0.09, b = 0.062}
+		self.db.profile.powerColors["SHADOWORBS"] = {r = 0.58, g = 0.51, b = 0.79}
+
+		self.db.profile.units.player.shadowOrbs = {anchorTo = "$parent", order = 60, height = 0.40, anchorPoint = "BR", x = -3, y = 6, size = 14, spacing = -4, growth = "LEFT", isBar = true, showAlways = true}
+		self.db.profile.units.player.burningEmbersBar = {enabled = true, background = false, height = 0.40, order = 70}
+		self.db.profile.units.player.demonicFuryBar = {enabled = true, background = false, height = 0.40, order = 70}
+	end
+
+	if( revisionClassic <= 14 ) then
+		self.db.profile.powerColors["CHI"] = {r = 0.71, g = 1.0, b = 0.92}
+
+		self.db.profile.units.player.chi = {anchorTo = "$parent", order = 60, height = 0.40, anchorPoint = "BR", x = -3, y = 6, size = 14, spacing = -4, growth = "LEFT", isBar = true, showAlways = true}
+	end
+
+	if( revisionClassic <= 13 ) then
+		self.db.profile.powerColors["BANKEDHOLYPOWER"] = {r = 0.96, g = 0.61, b = 0.84}
+	end
+
+	if( revisionClassic <= 12 ) then
+		self.db.profile.classColors["MONK"] = {r = 0.0, g = 1.00, b = 0.59}
+	end
+
+	if( revisionClassic <= 11 ) then
+		for unit, config in pairs(self.db.profile.units) do
+			if( config.powerBar ) then
+				config.powerBar.colorType = "type"
+			end
+		end
+	end
+
 	if( revisionClassic <= 5 ) then
 		local config = self.db.profile.units
 		config.player.soulShards = {anchorTo = "$parent", order = 60, height = 0.40, anchorPoint = "BR", x = -8, y = 6, size = 12, spacing = -2, growth = "LEFT", isBar = true, showAlways = true}
@@ -167,6 +232,7 @@ function ShadowUF:CheckUpgrade()
 			end
 		end
 	end
+	
 	if( revision <= 58 ) then
 		for unit, config in pairs(self.db.profile.units) do
 			if config.text then
@@ -374,7 +440,7 @@ function ShadowUF:LoadUnitDefaults()
 		self.defaults.profile.units[unit].altPowerBar = {enabled = not ShadowUF.fakeUnits[unit]}
 	end
 
-	-- PLAYER
+-- PLAYER
 	self.defaults.profile.units.player.enabled = true
 	self.defaults.profile.units.player.healthBar.predicted = true
 	self.defaults.profile.units.player.powerBar.predicted = true
@@ -382,11 +448,21 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.player.runeBar = {enabled = false}
 	self.defaults.profile.units.player.totemBar = {enabled = false}
 	self.defaults.profile.units.player.druidBar = {enabled = false}
+	self.defaults.profile.units.player.monkBar = {enabled = false}
 	self.defaults.profile.units.player.xpBar = {enabled = false}
 	self.defaults.profile.units.player.fader = {enabled = false}
-	self.defaults.profile.units.player.comboPoints = {enabled = true, isBar = true}
-	self.defaults.profile.units.player.holyPower = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.soulShards = {enabled = true, isBar = true}
+	self.defaults.profile.units.player.staggerBar = {enabled = true}
+	self.defaults.profile.units.player.demonicFuryBar = {enabled = true}
+	self.defaults.profile.units.player.burningEmbersBar = {enabled = true}
+	self.defaults.profile.units.player.eclipseBar = {enabled = true}
+	self.defaults.profile.units.player.holyPower = {enabled = true, isBar = true}
+	self.defaults.profile.units.player.shadowOrbs = {enabled = true, isBar = true}
+	self.defaults.profile.units.player.chi = {enabled = true, isBar = true}
+	self.defaults.profile.units.player.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
+	self.defaults.profile.units.player.auraPoints = {enabled = false, isBar = true}
+	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
+	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
@@ -395,7 +471,6 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.pet.enabled = true
 	self.defaults.profile.units.pet.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
 	self.defaults.profile.units.pet.xpBar = {enabled = false}
-	self.defaults.profile.units.pet.indicators.happiness = {enabled = true, size = 0, x = 0, y = 0}
     -- FOCUS
 	self.defaults.profile.units.focus.enabled = true
 	self.defaults.profile.units.focus.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
@@ -406,9 +481,9 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.focustarget.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
 	-- TARGET
 	self.defaults.profile.units.target.enabled = true
+	self.defaults.profile.units.target.comboPoints = {enabled = true, isBar = true}
+	self.defaults.profile.units.target.indicators.lfdRole = {enabled = false, size = 0, x = 0, y = 0}
 	self.defaults.profile.units.target.indicators.questBoss = {enabled = true, size = 0, x = 0, y = 0}
-	self.defaults.profile.units.target.comboPoints = {enabled = false, isBar = true}
-	self.defaults.profile.units.target.auras.buffs.approximateEnemyData = true
 	-- TARGETTARGET/TARGETTARGETTARGET
 	self.defaults.profile.units.targettarget.enabled = true
 	self.defaults.profile.units.targettargettarget.enabled = true
@@ -418,6 +493,7 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.party.auras.buffs.maxRows = 1
 	self.defaults.profile.units.party.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
 	self.defaults.profile.units.party.combatText.enabled = false
+	self.defaults.profile.units.party.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
 	self.defaults.profile.units.party.indicators.phase = {enabled = true, size = 0, x = 0, y = 0}
 	-- ARENA
 	self.defaults.profile.units.arena.enabled = false
@@ -426,6 +502,8 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.arena.auras.debuffs.maxRows = 1
 	self.defaults.profile.units.arena.auras.buffs.maxRows = 1
 	self.defaults.profile.units.arena.offset = 0
+	self.defaults.profile.units.arena.indicators.arenaSpec = {enabled = true, size = 0, x = 0, y = 0}
+	self.defaults.profile.units.arena.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
 	-- BATTLEGROUND
 	self.defaults.profile.units.battleground.enabled = false
 	self.defaults.profile.units.battleground.attribPoint = "TOP"
@@ -451,6 +529,7 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.raid.filters = {[1] = true, [2] = true, [3] = true, [4] = true, [5] = true, [6] = true, [7] = true, [8] = true}
 	self.defaults.profile.units.raid.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
 	self.defaults.profile.units.raid.combatText.enabled = false
+	self.defaults.profile.units.raid.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
 	-- RAID PET
 	self.defaults.profile.units.raidpet.groupBy = "GROUP"
 	self.defaults.profile.units.raidpet.sortOrder = "ASC"
@@ -462,7 +541,7 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.raidpet.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
 	self.defaults.profile.units.raidpet.combatText.enabled = false
 	-- MAINTANK
-	-- self.defaults.profile.units.maintank.roleFilter = "TANK"
+	self.defaults.profile.units.maintank.roleFilter = "TANK"
 	self.defaults.profile.units.maintank.groupFilter = "MAINTANK"
 	self.defaults.profile.units.maintank.groupBy = "GROUP"
 	self.defaults.profile.units.maintank.sortOrder = "ASC"
