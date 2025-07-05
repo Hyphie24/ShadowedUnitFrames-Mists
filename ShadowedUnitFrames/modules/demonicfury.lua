@@ -24,11 +24,11 @@ end
 
 function DemonicFury:UpdateMax(frame, event, unit, powerType)
 	if( event and powerType ~= "DEMONIC_FURY" ) then return end
-	frame.demonicFuryBar:SetMinMaxValues(0, UnitPowerMax("player", SPELL_POWER_DEMONIC_FURY) or 0)
+	frame.demonicFuryBar:SetMinMaxValues(0, UnitPowerMax("player", Enum.PowerType.DemonicFury) or 0)
 end
 
 function DemonicFury:Update(frame, event, unit, powerType)
 	if( event and powerType ~= "DEMONIC_FURY" ) then return end
 
-	frame.demonicFuryBar:SetValue(UnitPower("player", SPELL_POWER_DEMONIC_FURY) or 0)
+	frame.demonicFuryBar:SetValue(UnitPower("player", Enum.PowerType.DemonicFury) or 0)
 end

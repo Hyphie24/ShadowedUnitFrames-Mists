@@ -35,6 +35,8 @@ local function createConfigEnv()
 		UnitPower = function(unit, powerType)
 			if( powerType == Enum.PowerType.HolyPower or powerType == Enum.PowerType.SoulShards ) then
 				return 3
+			elseif( powerType == Enum.PowerType.Balance ) then
+				return getValue("UnitPower", unit, math.random(-100, 100))
 			elseif( powerType == Enum.PowerType.Chi) then
 				return 4
 			end
@@ -52,8 +54,8 @@ local function createConfigEnv()
 		end,
 		UnitPowerMax = function(unit, powerType)
 			if( powerType == Enum.PowerType.Rage or powerType == Enum.PowerType.Energy or powerType == Enum.PowerType.RunicPower
-			 or powerType == Enum.PowerType.LunarPower or powerType == Enum.PowerType.Maelstrom or powerType == Enum.PowerType.Insanity
-			 or powerType == Enum.PowerType.Fury or powerType == Enum.PowerType.Pain ) then
+			 or powerType == Enum.PowerType.LunarPower or powerType == Enum.PowerType.Maelstrom
+			 or powerType == Enum.PowerType.Fury or powerType == Enum.PowerType.Pain or powerType == Enum.PowerType.DemonicFury ) then
 				return 100
 			elseif( powerType == Enum.PowerType.Focus ) then
 				return 120
@@ -64,6 +66,8 @@ local function createConfigEnv()
 				return 6
 			elseif( powerType == Enum.PowerType.ArcaneCharges ) then
 				return 4
+			elseif( powerType == Enum.PowerType.ShadowOrbs) then
+				return 3
 			end
 
 			return 50000
