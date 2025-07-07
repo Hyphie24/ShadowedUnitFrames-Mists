@@ -7,7 +7,8 @@
 This is **ONLY** for Cata/Mists Classic
 
 I take no credit in the creation/updates to SUF, this is just a fan fix for SUF
-
+7/7 update: Balance druid Eclipse bar now working as intended (at least on PTR) looking into another ppssible issue and will push that update then
+This will most likely be last push unless something drastic breaks
 7/6 update: Version 5.5.0 should have these all fixed, Please let me know of any other issues that arise 
 - Affliction Warlock Soul Shards Bar
 - Destruction Warlock Burning Embers Bar
