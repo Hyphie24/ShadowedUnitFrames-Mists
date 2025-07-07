@@ -50,14 +50,14 @@ local LSR = LibStub("SpellRange-1.0")
 local playerClass = select(2, UnitClass("player"))
 local rangeSpells = {}
 
-local UnitPhaseReason_o = UnitPhaseReason
-local UnitPhaseReason = function(unit)
-	local phase = UnitPhaseReason_o(unit)
-	if (phase == Enum.PhaseReason.WarMode or phase == Enum.PhaseReason.ChromieTime) and UnitIsVisible(unit) then
-		return nil
-	end
-	return phase
-end
+-- local UnitPhaseReason_o = UnitPhaseReason
+-- local UnitPhaseReason = function(unit)
+	-- local phase = UnitPhaseReason_o(unit)
+	-- if (phase == Enum.PhaseReason.WarMode or phase == Enum.PhaseReason.ChromieTime) and UnitIsVisible(unit) then
+		-- return nil
+	-- end
+	-- return phase
+-- end
 
 local function checkRange(self)
 	local frame = self.parent
@@ -70,17 +70,17 @@ local function checkRange(self)
 		spell = rangeSpells.hostile
 	end
 
-	if( not UnitIsConnected(frame.unit) or UnitPhaseReason(frame.unit) ) then
-		frame:SetRangeAlpha(ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
-	elseif( spell ) then
-		frame:SetRangeAlpha(LSR.IsSpellInRange(spell, frame.unit) == 1 and ShadowUF.db.profile.units[frame.unitType].range.inAlpha or ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
-	-- That didn't work, but they are grouped lets try the actual API for this, it's a bit flaky though and not that useful generally
-	elseif( UnitInRaid(frame.unit) or UnitInParty(frame.unit) ) then
-		frame:SetRangeAlpha(UnitInRange(frame.unit, "player") and ShadowUF.db.profile.units[frame.unitType].range.inAlpha or ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
-	-- Nope, just show in range :(
-	else
-		frame:SetRangeAlpha(ShadowUF.db.profile.units[frame.unitType].range.inAlpha)
-	end
+	-- if( not UnitIsConnected(frame.unit) or UnitPhaseReason(frame.unit) ) then
+		-- frame:SetRangeAlpha(ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
+	-- elseif( spell ) then
+		-- frame:SetRangeAlpha(LSR.IsSpellInRange(spell, frame.unit) == 1 and ShadowUF.db.profile.units[frame.unitType].range.inAlpha or ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
+	-- -- That didn't work, but they are grouped lets try the actual API for this, it's a bit flaky though and not that useful generally
+	-- elseif( UnitInRaid(frame.unit) or UnitInParty(frame.unit) ) then
+		-- frame:SetRangeAlpha(UnitInRange(frame.unit, "player") and ShadowUF.db.profile.units[frame.unitType].range.inAlpha or ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
+	-- -- Nope, just show in range :(
+	-- else
+		-- frame:SetRangeAlpha(ShadowUF.db.profile.units[frame.unitType].range.inAlpha)
+	-- end
 end
 
 local function updateSpellCache(category)
