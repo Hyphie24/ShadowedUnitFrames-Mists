@@ -162,6 +162,7 @@ function ShadowUF:CheckUpgrade()
 			end
 		end
 end
+			
 	if( revision <= 15 ) then
 		self.db.profile.powerColors["DEMONICFURY"] = {r = 0.58, g = 0.51, b = 0.79}
 		self.db.profile.powerColors["BURNINGEMBERS"] = {r = 0.58, g = 0.51, b = 0.79}

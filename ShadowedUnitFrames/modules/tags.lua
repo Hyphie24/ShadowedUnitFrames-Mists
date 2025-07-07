@@ -824,7 +824,7 @@ Tags.defaultTags = {
 		local points = UnitPower(ShadowUF.playerUnit, Enum.PowerType.Chi)
 		return points and points > 0 and points
 	end]],
-["warlock:demonic:perpp"] = [[function(unit, unitOwner)
+	["warlock:demonic:perpp"] = [[function(unit, unitOwner)
 		local maxPower = UnitPowerMax(unit, Enum.PowerType.DemonicFury)
 		if( maxPower <= 0 ) then
 			return nil
@@ -1184,7 +1184,7 @@ Tags.defaultEvents = {
 	["unit:situation"]			= "UNIT_THREAT_SITUATION_UPDATE",
 	-- ["warlock:demonic:curpp"]	= "SUF_POWERTYPE:DEMONIC_FURY UNIT_POWER_FREQUENT",
 	-- ["warlock:demonic:maxpp"] 	= "SUF_POWERTYPE:DEMONIC_FURY UNIT_MAXPOWER",
-	-- ["warlock:demonic:perpp"] 	= "SUF_POWERTYPE:DEMONIC_FURY UNIT_POWER_FREQUENT UNIT_MAXPOWER",
+	-- ["warlock:demonic:perpp"] 	= "SUF_POWERTYPE:FEL_ENERGY UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["monk:chipoints"]			= "SUF_POWERTYPE:LIGHT_FORCE UNIT_POWER_FREQUENT",
 	["priest:shadoworbs"]		= "SUF_POWERTYPE:SHADOW_ORBS UNIT_POWER_FREQUENT",
 }

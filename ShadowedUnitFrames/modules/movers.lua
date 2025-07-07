@@ -48,8 +48,14 @@ local function createConfigEnv()
 				return getValue("UnitPower", unit, math.random(-100, 100))
 			elseif( powerType == Enum.PowerType.Chi) then
 				return 4
+			elseif( powerType == Enum.PowerType.ShadowOrbs ) then
+				return PRIEST_BAR_NUM_ORBS
+			elseif( powerType == Enum.PowerType.BurningEmbers ) then
+				return math.floor(MAX_POWER_PER_EMBER + (MAX_POWER_PER_EMBER / 2))
+			elseif( powerType == Enum.PowerType.DemonicFury ) then
+				return 100
 			end
-
+			
 			return getValue("UnitPower", unit, math.random(20000, 50000))
 		end,
 		UnitGetTotalHealAbsorbs = function(unit)
@@ -75,8 +81,14 @@ local function createConfigEnv()
 				return 6
 			elseif( powerType == Enum.PowerType.ArcaneCharges ) then
 				return 4
+		elseif( powerType == Enum.PowerType.ShadowOrbs ) then
+				return PRIEST_BAR_NUM_ORBS
+			elseif( powerType == Enum.PowerType.BurningEmbers ) then
+				return MAX_POWER_PER_EMBER * 3
+			elseif( powerType == Enum.PowerType.DemonicFury ) then
+				return 100
 			end
-
+			
 			return 50000
 		end,
 		UnitHasIncomingResurrection = function(unit) return true end,
