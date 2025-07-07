@@ -5,8 +5,8 @@
 ShadowUF = select(2, ...)
 
 local L = ShadowUF.L
-ShadowUF.dbRevision = 61
-ShadowUF.dbRevisionClassic = 20
+ShadowUF.dbRevision = 63
+ShadowUF.dbRevisionClassic = 61
 ShadowUF.playerUnit = "player"
 ShadowUF.enabledUnits = {}
 ShadowUF.modules = {}
@@ -27,16 +27,13 @@ for i=1, MAX_BOSS_FRAMES do ShadowUF.bossUnits[i] = "boss" .. i end
 for i=1, 5 do ShadowUF.arenaUnits[i] = "arena" .. i end
 for i=1, 4 do ShadowUF.battlegroundUnits[i] = "arena" .. i end
 
-local TagEnv = setmetatable({
-	GetThreatStatusColor = ShadowUF.API.GetThreatStatusColor,
-}, { __index = _G, __newindex = function(k,v) _G[k] = v end })
-
 function ShadowUF:OnInitialize()
 	self.defaults = {
 		profile = {
 			locked = false,
 			advanced = false,
 			tooltipCombat = false,
+			bossmodSpellRename = true,
 			omnicc = false,
 			blizzardcc = true,
 			tags = {},
@@ -72,8 +69,6 @@ function ShadowUF:OnInitialize()
 				error(msg, 3)
 			end
 
-			setfenv(func, TagEnv)
-
 			tbl[index] = func
 			return tbl[index]
 	end})
@@ -93,18 +88,28 @@ function ShadowUF:OnInitialize()
 	self.Layout:LoadSML()
 	self:LoadUnits()
 	self.modules.movers:Update()
+
+	local LibDualSpec = LibStub("LibDualSpec-1.0", true)
+	if LibDualSpec then LibDualSpec:EnhanceDatabase(self.db, "ShadowedUnitFrames") end
 end
 
 function ShadowUF.UnitAuraBySpell(unit, spell, filter)
-	local index = 0
-	while true do
-		index = index + 1
-		local name, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, index, filter)
-		if not name then break end
-		if (type(spell) == "string" and spell == name) or (type(spell) == "number" and spell == spellID) then
-			return UnitAura(unit, index, filter)
+	local auraData
+	if type(spell) == "string" then
+		auraData = C_UnitAuras.GetAuraDataBySpellName(unit, spell, filter)
+	elseif type(spell) == "number" then
+		local index = 0
+		while true do
+			index = index + 1
+			local data = C_UnitAuras.GetAuraDataByIndex(unit, index, filter)
+			if not data then break end
+			if data.spellId == spell then
+				auraData = data
+				break
+			end
 		end
 	end
+	return AuraUtil.UnpackAuraData(auraData)
 end
 
 function ShadowUF:CheckBuild()
@@ -118,6 +123,238 @@ end
 function ShadowUF:CheckUpgrade()
 	local revisionClassic = self.db.profile.revisionClassic or (self.db.profile.revision and 1 or self.dbRevisionClassic)
 	local revision = self.db.profile.revision or self.dbRevision
+	if( revisionClassic <= 45 ) then
+		for unit, config in pairs(self.db.profile.units) do
+			if( config.auras ) then
+				for _, key in pairs({"buffs", "debuffs"}) do
+					local aura = config.auras[key]
+					aura.show = aura.show or {}
+					aura.show.player = true
+					aura.show.boss = true
+					aura.show.raid = true
+					aura.show.consolidated = true
+					aura.show.misc = true
+				end
+			end
+		end
+	end
+
+	if( revisionClassic <= 44 ) then
+		ShadowUF:LoadDefaultLayout(true)
+
+		for unit, config in pairs(self.defaults.profile.units) do
+			if( config.indicators and config.indicators.resurrect ) then
+				local db = self.db.profile.units[unit]
+				
+				local options
+				if( unit == "target" ) then
+					options = {enabled = true, anchorPoint = "RC", size = 28, x = -39, y = -1, anchorTo = "$parent"}
+				else
+					options = {enabled = true, anchorPoint = "LC", size = 28, x = 37, y = -1, anchorTo = "$parent"}
+				end
+
+				for key, value in pairs(options) do
+					if( db.indicators.resurrect[key] == nil ) then
+						db.indicators.resurrect[key] = value
+					end
+				end
+			end
+		end		
+	end
+
+	if( revisionClassic <= 43 ) then
+		for key, _ in pairs(self.db.profile.auraIndicators.indicators) do
+			self.db.profile.auraIndicators.height = nil
+			self.db.profile.auraIndicators.filters[key] = {boss = {priority = 100}, curable = {priority = 100}}
+		end
+	end
+
+	if( revisionClassic <= 42 ) then
+		for unit, config in pairs(self.db.profile.units) do
+			config.auras.height = nil
+
+			for type, auraConfig in pairs(config.auras) do
+				auraConfig.show = {misc = true}
+				auraConfig.show.player = auraConfig.player
+				auraConfig.show.raid = auraConfig.raid
+
+				auraConfig.enlarge = {}
+				auraConfig.enlarge["SELF"] = auraConfig.enlargeSelf
+				auraConfig.enlarge["REMOVABLE"] = auraConfig.enlargeStealable
+
+				auraConfig.timers = {}
+				if( auraConfig.selfTimers ) then
+					auraConfig.timers["SELF"] = true
+				else
+					auraConfig.timers["ALL"] = true
+				end
+
+				auraConfig.selfTimers = nil
+				auraConfig.player = nil
+				auraConfig.raid = nil
+				auraConfig.enlargeSelf = nil
+				auraConfig.enlargeStealable = nil
+			end
+
+			config.auras.buffs.show.consolidated = true
+			config.auras.debuffs.show.boss = true
+		end
+	end
+
+	if( revisionClassic <= 41 ) then
+		local phase = self.db.profile.units.party.indicators.phase
+		phase.anchorPoint = phase.anchorPoint or "RC"
+		phase.size = phase.size or 14
+		phase.x = phase.x or -11
+		phase.y = phase.y or 0
+		phase.anchorTo = phase.anchorTo or "$parent"
+	end
+
+	if( revisionClassic <= 40 ) then
+		ShadowUF:LoadDefaultLayout(true)
+
+		for unit, config in pairs(self.db.profile.units) do
+			if( config.healAbsorb and not self.defaults.profile.units[unit].healAbsorb ) then
+				config.healAbsorb = nil
+			end
+		end
+	end
+
+	if( revisionClassic <= 39 ) then
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[monk:abs:stagger]", anchorTo = "$staggerBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
+	end
+
+	if( revisionClassic <= 38 ) then
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "", anchorTo = "$runeBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true, block = true})
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "", anchorTo = "$totemBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true, block = true})
+
+		for _, config in pairs(self.db.profile.units) do
+			for id, text in pairs(config.text) do
+				if( id <= 5 ) then
+					text.default = true
+				end
+			end
+		end
+	end
+
+	if( revisionClassic <= 37 ) then
+		self.db.profile.healthColors.healAbsorb = {r = 0.68, g = 0.47, b = 1}
+	end
+
+	if( revisionClassic <= 34 ) then
+		self.db.profile.units.player.staggerBar = {enabled = true, background = true, height = 0.30, order = 70}
+		self.db.profile.powerColors.STAGGER_GREEN = {r = 0.52, g = 1.0, b = 0.52}
+		self.db.profile.powerColors.STAGGER_YELLOW = {r = 1.0, g = 0.98, b = 0.72}
+		self.db.profile.powerColors.STAGGER_RED = {r = 1.0, g = 0.42, b = 0.42}
+	end
+
+	if( revisionClassic <= 33 ) then
+		for unit, config in pairs(self.db.profile.units) do
+			if( not self.defaults.profile.units[unit].incHeal and config.incHeal ) then
+				config.incHeal = nil
+			end
+
+			if( not self.defaults.profile.units[unit].incAbsorb and config.incAbsorb ) then
+				config.incAbsorb = nil
+			end
+
+			if( config.incAbsorb ) then
+				config.incAbsorb.cap = config.incAbsorb.cap or 1.30
+			end
+
+			if( config.incHeal ) then
+				config.incHeal.cap = config.incHeal.cap or 1.30
+			end
+		end
+	end
+
+	if( revisionClassic <= 32 ) then
+		for unit, config in pairs(self.db.profile.units) do
+			if( config.incAbsorb and not config.incAbsorb.cap ) then
+				config.incAbsorb.cap = 1.30
+			end
+		end
+	end
+
+	if( revisionClassic <= 31 or not self.db.profile.healthColors.incAbsorb ) then
+		self.db.profile.healthColors.incAbsorb = {r = 0.93, g = 0.75, b = 0.09}
+
+		for unit, config in pairs(self.db.profile.units) do
+			if( config.incHeal ) then
+				config.incHeal.enabled = config.incHeal.heals
+				config.incHeal.heals = nil
+				config.incAbsorb = {enabled = config.incHeal.enabled}
+			end
+		end
+	end
+
+	if( revisionClassic <= 30 ) then
+		self.db.profile.powerColors.RUNEOFPOWER = {r = 0.35, g = 0.45, b = 0.60}
+	end
+
+	if( revisionClassic <= 29 ) then
+		self.db.profile.units.player.totemBar.showAlways = true
+	end
+
+	if( revisionClassic <= 28 ) then
+		self.db.profile.units.target.indicators.questBoss = {enabled = true, anchorPoint = "BR", size = 22, x = 9, y = 24, anchorTo = "$parent"}
+		self.db.profile.units.focus.indicators.questBoss = {enabled = false, anchorPoint = "BR", size = 22, x = 7, y = 14, anchorTo = "$parent"}
+
+		for unit, config in pairs(self.db.profile.units) do
+			for key, module in pairs(ShadowUF.modules) do
+				if( config[key] and ( module.moduleHasBar or module.isComboPoints or config[key].isBar or config[key].order ) ) then
+					config[key].height = config[key].height or 0.40
+				end
+			end
+		end
+	end
+
+	if( revisionClassic <= 27 ) then
+		self.db.profile.healthColors.aggro = CopyTable(self.db.profile.healthColors.hostile)
+	end
+
+	if( revisionClassic <= 26 ) then
+		for _, unit in pairs(self.unitList) do
+			if( unit ~= "player" ) then
+				for id, text in pairs(self.db.profile.units[unit].text) do
+					if( text.anchorTo == "$demonicFuryBar" ) then
+						self.db.profile.units[unit].text[id] = nil
+					end
+				end
+			end
+		end
+	end
+
+	if( revisionClassic <= 25 ) then
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[druid:eclipse]", anchorTo = "$eclipseBar", anchorPoint = "CLI", size = -1, x = 0, y = 0, default = true})
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[priest:shadoworbs]", anchorTo = "$shadowOrbsBar", anchorPoint = "CLI", size = -1, x = 0, y = 0, default = true})
+
+	end
+
+	if( revisionClassic <= 24 ) then
+		self.db.profile.powerColors.AURAPOINTS = {r = 1.0, g = 0.80, b = 0}
+		self.db.profile.units.player.auraPoints = {enabled = false, showAlways = true, anchorTo = "$parent", order = 60, anchorPoint = "BR", x = -3, y = 8, size = 14, spacing = -4, growth = "LEFT", isBar = true, height = 0.40}
+	end
+
+	if( revisionClassic <= 23 ) then
+		self.db.profile.hidden.playerAltPower = false
+		self.db.profile.powerColors.ALTERNATE = {r = 0.815, g = 0.941, b = 1}
+	end
+
+	if( revisionClassic <= 22 ) then
+		self:LoadDefaultLayout(true)
+
+		for _, unit in pairs(self.unitList) do
+			if( ShadowUF.fakeUnits[unit] ) then
+				self.db.profile.units[unit].altPowerBar.enabled = false
+			end
+		end
+	end
+
+	if( revisionClassic <= 21 ) then
+		self.db.profile.powerColors["POWER_TYPE_FEL_ENERGY"] = {r = 0.878, g = 0.980, b = 0}
+	end
+	
 	if( revisionClassic <= 20 ) then
 		self.db.profile.powerColors["ALTERNATE"] = {r = 0.71, g = 0.0, b = 1.0}
 		
@@ -271,8 +508,7 @@ function ShadowUF:CheckUpgrade()
 				end
 			end
 		end
-	end
-
+end
 	if( revision <= 56 ) then
 		-- new classes
 		self.db.profile.classColors.DEMONHUNTER = {r = 0.64, g = 0.19, b = 0.79}
@@ -312,6 +548,12 @@ function ShadowUF:CheckUpgrade()
 	if( revision <= 47 ) then
 		local config = self.db.profile.units
 		config.player.comboPoints = config.target.comboPoints
+	end
+
+	if( revision <= 46 ) then
+		local config = self.db.profile.units.arena
+		config.indicators.arenaSpec = {enabled = true, anchorPoint = "LC", size = 28, x = 0, y = 0, anchorTo = "$parent"}
+		config.indicators.lfdRole = {enabled = true, anchorPoint = "BR", size = 14, x = 3, y = 14, anchorTo = "$parent"}
 	end
 
 	if( revision <= 45 ) then
@@ -427,8 +669,9 @@ function ShadowUF:LoadUnitDefaults()
 			self.defaults.profile.units[unit].indicators.role = {enabled = true, size = 0}
 			self.defaults.profile.units[unit].indicators.status = {enabled = false, size = 19}
 			self.defaults.profile.units[unit].indicators.resurrect = {enabled = true}
+			self.defaults.profile.units[unit].indicators.sumPending = {enabled = true}
 
-			if( unit ~= "focus"  and unit ~= "target" ) then
+			if( unit ~= "focus" and unit ~= "target" ) then
 				self.defaults.profile.units[unit].indicators.ready = {enabled = true, size = 0}
 			end
 		end
@@ -440,7 +683,7 @@ function ShadowUF:LoadUnitDefaults()
 		self.defaults.profile.units[unit].altPowerBar = {enabled = not ShadowUF.fakeUnits[unit]}
 	end
 
--- PLAYER
+	-- PLAYER
 	self.defaults.profile.units.player.enabled = true
 	self.defaults.profile.units.player.healthBar.predicted = true
 	self.defaults.profile.units.player.powerBar.predicted = true
@@ -449,24 +692,28 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.player.totemBar = {enabled = false}
 	self.defaults.profile.units.player.druidBar = {enabled = false}
 	self.defaults.profile.units.player.monkBar = {enabled = false}
+	self.defaults.profile.units.player.priestBar = {enabled = true}
+	self.defaults.profile.units.player.shamanBar = {enabled = true}
 	self.defaults.profile.units.player.xpBar = {enabled = false}
 	self.defaults.profile.units.player.fader = {enabled = false}
 	self.defaults.profile.units.player.soulShards = {enabled = true, isBar = true}
+	self.defaults.profile.units.player.arcaneCharges = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.staggerBar = {enabled = true}
+	self.defaults.profile.units.player.comboPoints = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.demonicFuryBar = {enabled = true}
 	self.defaults.profile.units.player.burningEmbersBar = {enabled = true}
-	self.defaults.profile.units.player.eclipseBar = {enabled = true}
+	self.defaults.profile.units.player.eclipseBar = {enabled = true}															 
 	self.defaults.profile.units.player.holyPower = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.shadowOrbs = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.chi = {enabled = true, isBar = true}
 	self.defaults.profile.units.player.indicators.lfdRole = {enabled = true, size = 0, x = 0, y = 0}
 	self.defaults.profile.units.player.auraPoints = {enabled = false, isBar = true}
+	self.defaults.profile.units.player.essence = {enabled = true, isBar = true}
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
 	table.insert(self.defaults.profile.units.player.text, {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
-
     -- PET
 	self.defaults.profile.units.pet.enabled = true
 	self.defaults.profile.units.pet.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
@@ -481,9 +728,9 @@ function ShadowUF:LoadUnitDefaults()
 	self.defaults.profile.units.focustarget.fader = {enabled = false, combatAlpha = 1.0, inactiveAlpha = 0.60}
 	-- TARGET
 	self.defaults.profile.units.target.enabled = true
-	self.defaults.profile.units.target.comboPoints = {enabled = true, isBar = true}
 	self.defaults.profile.units.target.indicators.lfdRole = {enabled = false, size = 0, x = 0, y = 0}
 	self.defaults.profile.units.target.indicators.questBoss = {enabled = true, size = 0, x = 0, y = 0}
+	self.defaults.profile.units.target.comboPoints = {enabled = false, isBar = true}
 	-- TARGETTARGET/TARGETTARGETTARGET
 	self.defaults.profile.units.targettarget.enabled = true
 	self.defaults.profile.units.targettargettarget.enabled = true
@@ -743,7 +990,6 @@ function ShadowUF:ProfilesChanged()
 	end
 
 	self.db.profile.revision = self.dbRevision
-	self.db.profile.revisionClassic = self.dbRevisionClassic
 
 	self:FireModuleEvent("OnProfileChange")
 	self:LoadUnits()
@@ -800,9 +1046,21 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.party and not active_hiddens.party ) then
+					   
+										
+																		  
+																					   
+																										  
+		
+																					   
+	   
+	  
+											   
+	  
 		for i=1, MAX_PARTY_MEMBERS do
 			local name = "PartyMemberFrame" .. i
 			hideBlizzardFrames(false, _G[name], _G[name .. "HealthBar"], _G[name .. "ManaBar"])
+	  
 		end
 
 		-- This stops the compact party frame from being shown
@@ -847,14 +1105,22 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.player and not active_hiddens.player ) then
-		hideBlizzardFrames(false, PlayerFrame)
+		hideBlizzardFrames(false, PlayerFrame, AlternatePowerBar)
 
 		-- We keep these in case someone is still using the default auras, otherwise it messes up vehicle stuff
 		PlayerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+		PlayerFrame:RegisterEvent("UNIT_ENTERING_VEHICLE")
+		PlayerFrame:RegisterEvent("UNIT_ENTERED_VEHICLE")
+		PlayerFrame:RegisterEvent("UNIT_EXITING_VEHICLE")
+		PlayerFrame:RegisterEvent("UNIT_EXITED_VEHICLE")											  
 		PlayerFrame:SetMovable(true)
 		PlayerFrame:SetUserPlaced(true)
 		PlayerFrame:SetDontSavePosition(true)
 	end
+
+																					
+																																				 
+	   
 
 	if( self.db.profile.hidden.pet and not active_hiddens.pet ) then
 		hideBlizzardFrames(false, PetFrame)
@@ -869,11 +1135,30 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.boss and not active_hiddens.boss ) then
+													
 		for i=1, MAX_BOSS_FRAMES do
 			local name = "Boss" .. i .. "TargetFrame"
+									  
+																				  
+																																													  
+		
 			hideBlizzardFrames(false, _G[name], _G[name .. "HealthBar"], _G[name .. "ManaBar"])
+	   
+	   
+																					   
+	  
 		end
 	end
+
+																			  
+									  
+
+																													
+	
+
+																					   
+											  
+	
 
 	-- As a reload is required to reset the hidden hooks, we can just set this to true if anything is true
 	for type, flag in pairs(self.db.profile.hidden) do

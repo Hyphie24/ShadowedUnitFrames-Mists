@@ -21,7 +21,7 @@ function IncHeal:OnLayoutApplied(frame)
 	local bar = frame[self.frameKey]
 	if( not frame.visibility[self.frameKey] or not frame.visibility.healthBar ) then return end
 
-	if( UnitGetTotalHealAbsorbs and frame.visibility.healAbsorb ) then
+	if( frame.visibility.healAbsorb ) then
 		frame:RegisterUnitEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", self, "UpdateFrame")
 	else
 		frame:UnregisterSingleEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED", self, "UpdateFrame")
@@ -139,7 +139,7 @@ function IncHeal:UpdateFrame(frame)
 
 	local amount = UnitGetIncomingHeals(frame.unit) or 0
 	if( amount > 0 and frame.visibility.healAbsorb ) then
-		amount = amount + (UnitGetTotalHealAbsorbs and UnitGetTotalHealAbsorbs(frame.unit) or 0)
+		amount = amount + (UnitGetTotalHealAbsorbs(frame.unit) or 0)
 	end
 
 	self:PositionBar(frame, amount)

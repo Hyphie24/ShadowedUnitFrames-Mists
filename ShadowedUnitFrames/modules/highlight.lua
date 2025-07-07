@@ -82,6 +82,7 @@ function Highlight:OnEnable(frame)
 
 	if( ShadowUF.db.profile.units[frame.unitType].highlight.attention and frame.unitType ~= "target" and frame.unitType ~= "focus" ) then
 		frame:RegisterNormalEvent("PLAYER_TARGET_CHANGED", self, "UpdateAttention")
+		frame:RegisterNormalEvent("PLAYER_FOCUS_CHANGED", self, "UpdateAttention")
 		frame:RegisterUpdateFunc(self, "UpdateAttention")
 	end
 
@@ -178,7 +179,7 @@ function Highlight:UpdateAura(frame)
 		local id = 0
 		while( true ) do
 			id = id + 1
-			local name, _, _, auraType = UnitDebuff(frame.unit, id)
+			local name, _, _, auraType = AuraUtil.UnpackAuraData(C_UnitAuras.GetDebuffDataByIndex(frame.unit, id))
 			if( not name ) then break end
 			if( auraType == "" ) then auraType = "Enrage" end
 
