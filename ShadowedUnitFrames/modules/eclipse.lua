@@ -57,7 +57,7 @@ function Eclipse:UpdateVisibility(frame)
 	local form = GetShapeshiftFormID()
 	ShadowUF.Layout:SetBarVisibility(frame, "eclipseBar", form == MOONKIN_FORM or not form and not frame.inVehicle)
 	self:UpdateDirection(frame)
-	self:Update(frame, nil, nil, "ECLIPSE")
+	self:Update(frame, nil, nil, "BALANCE")
 end
 
 function Eclipse:UpdateDirection(frame)
@@ -68,7 +68,7 @@ function Eclipse:UpdateDirection(frame)
 end
 
 function Eclipse:Update(frame, event, unit, powerType)
-	if( event and powerType ~= "ECLIPSE" ) then return end
+	if( event and powerType ~= "BALANCE" ) then return end
 
 	local power = UnitPower("player", Enum.PowerType.Balance )
 	local xpos = (frame.eclipseBar:GetWidth() / 2) * (power / 100)

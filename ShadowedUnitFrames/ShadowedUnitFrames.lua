@@ -683,21 +683,9 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.party and not active_hiddens.party ) then
-					   
-										
-																		  
-																					   
-																										  
-		
-																					   
-	   
-	  
-											   
-	  
 		for i=1, MAX_PARTY_MEMBERS do
 			local name = "PartyMemberFrame" .. i
 			hideBlizzardFrames(false, _G[name], _G[name .. "HealthBar"], _G[name .. "ManaBar"])
-	  
 		end
 
 		-- This stops the compact party frame from being shown
@@ -742,7 +730,7 @@ function ShadowUF:HideBlizzardFrames()
 	end
 
 	if( self.db.profile.hidden.player and not active_hiddens.player ) then
-		hideBlizzardFrames(false, PlayerFrame, AlternatePowerBar)
+		hideBlizzardFrames(false, PlayerFrame)
 
 		-- We keep these in case someone is still using the default auras, otherwise it messes up vehicle stuff
 		PlayerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -754,10 +742,6 @@ function ShadowUF:HideBlizzardFrames()
 		PlayerFrame:SetUserPlaced(true)
 		PlayerFrame:SetDontSavePosition(true)
 	end
-
-																					
-																																				 
-	   
 
 	if( self.db.profile.hidden.pet and not active_hiddens.pet ) then
 		hideBlizzardFrames(false, PetFrame)
@@ -775,27 +759,11 @@ function ShadowUF:HideBlizzardFrames()
 													
 		for i=1, MAX_BOSS_FRAMES do
 			local name = "Boss" .. i .. "TargetFrame"
-									  
-																				  
-																																													  
-		
+
 			hideBlizzardFrames(false, _G[name], _G[name .. "HealthBar"], _G[name .. "ManaBar"])
-	   
-	   
-																					   
-	  
+
 		end
 	end
-
-																			  
-									  
-
-																													
-	
-
-																					   
-											  
-	
 
 	-- As a reload is required to reset the hidden hooks, we can just set this to true if anything is true
 	for type, flag in pairs(self.db.profile.hidden) do

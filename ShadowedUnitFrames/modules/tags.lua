@@ -927,19 +927,19 @@ Tags.defaultTags = {
 	["druid:curpp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		local powerType = UnitPowerType(unit)
-		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 		return ShadowUF:FormatLargeNumber(UnitPower(unit, Enum.PowerType.Mana))
 	end]],
 	["druid:abscurpp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		local powerType = UnitPowerType(unit)
-		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 		return UnitPower(unit, Enum.PowerType.Mana)
 	end]],
 	["druid:curmaxpp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		local powerType = UnitPowerType(unit)
-		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 
 		local maxPower = UnitPowerMax(unit, Enum.PowerType.Mana)
 		local power = UnitPower(unit, Enum.PowerType.Mana)
@@ -959,7 +959,7 @@ Tags.defaultTags = {
 	["druid:absolutepp"] = [[function(unit, unitOwner)
 		if( select(2, UnitClass(unit)) ~= "DRUID" ) then return nil end
 		local powerType = UnitPowerType(unit)
-		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+		if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 
 		return UnitPower(unit, Enum.PowerType.Mana)
 	end]],
@@ -967,7 +967,7 @@ Tags.defaultTags = {
 		local class = select(2, UnitClass(unit))
 		local powerType = UnitPowerType(unit)
 		if( class == "DRUID" ) then
-			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 		elseif( class == "PRIEST" ) then
 			if( powerType ~= Enum.PowerType.Insanity ) then return nil end
 		elseif( class == "SHAMAN" ) then
@@ -981,7 +981,7 @@ Tags.defaultTags = {
 		local class = select(2, UnitClass(unit))
 		local powerType = UnitPowerType(unit)
 		if( class == "DRUID" ) then
-			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 		elseif( class == "PRIEST" ) then
 			if( powerType ~= Enum.PowerType.Insanity ) then return nil end
 		elseif( class == "SHAMAN" ) then
@@ -995,7 +995,7 @@ Tags.defaultTags = {
 		local class = select(2, UnitClass(unit))
 		local powerType = UnitPowerType(unit)
 		if( class == "DRUID" ) then
-			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 		elseif( class == "PRIEST" ) then
 			if( powerType ~= Enum.PowerType.Insanity ) then return nil end
 		elseif( class == "SHAMAN" ) then
@@ -1018,7 +1018,7 @@ Tags.defaultTags = {
 		local class = select(2, UnitClass(unit))
 		local powerType = UnitPowerType(unit)
 		if( class == "DRUID" ) then
-			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.LunarPower ) then return nil end
+			if( powerType ~= Enum.PowerType.Rage and powerType ~= Enum.PowerType.Energy and powerType ~= Enum.PowerType.Balance ) then return nil end
 		elseif( class == "PRIEST" ) then
 			if( powerType ~= Enum.PowerType.Insanity ) then return nil end
 		elseif( class == "SHAMAN" ) then
@@ -1138,6 +1138,7 @@ Tags.defaultEvents = {
 	["curmaxpp"]				= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["absolutepp"]				= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["smart:curmaxpp"]			= "SUF_POWERTYPE:CURRENT UNIT_POWER_FREQUENT UNIT_MAXPOWER",
+	["druid:eclipse"]			= "SUF_POWERTYPE:BALANCE UNIT_POWER_FREQUENT UNIT_MAXPOWER",
 	["druid:curpp"]  	    	= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["druid:abscurpp"]      	= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["druid:curmaxpp"]			= "SUF_POWERTYPE:MANA UNIT_POWER_FREQUENT UNIT_MAXPOWER UNIT_DISPLAYPOWER",
@@ -1270,6 +1271,7 @@ Tags.defaultCategories = {
 	["druid:abscurpp"]  	    = "classspec",
 	["druid:curmaxpp"]			= "classspec",
 	["druid:absolutepp"]		= "classspec",
+	["druid:eclipse"]			= "classspec",
 	["sec:curpp"]     	    	= "classspec",
 	["sec:abscurpp"]  	    	= "classspec",
 	["sec:curmaxpp"]			= "classspec",
