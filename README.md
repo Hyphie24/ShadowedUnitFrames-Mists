@@ -4,7 +4,7 @@
 
 ***This will 100% be removed at the request of the original addon author(s)***
 
-This is **ONLY** for Mists
+This is **ONLY** for Cata/Mists Classic
 
 I take no credit in the creation/updates to SUF, this is just a fan fix for SUF
 
