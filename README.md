@@ -21,4 +21,4 @@ Warlock Demonic Fury
 Druid Eclipse
 
 In Progress
-Priest Shadow Orbs
+Priest Shadow Orbs - *note to self make sure to actually name the CORRECT POWER!* - 100% working now
