@@ -86,7 +86,7 @@ end
 
 function XP:UpdateRep(frame)
 	if( not frame.xpBar.rep ) then return end
-	local factionData = C_Reputation.GetWatchedFactionData()
+	local factionData = GetWatchedFactionInfo()
 	if( not factionData ) then
 		frame.xpBar.rep:Hide()
 		return
@@ -108,7 +108,7 @@ end
 
 function XP:UpdateXP(frame)
 	-- At the level cap or XP is disabled, or the pet is actually a vehicle right now, swap to reputation bar (or hide it)
-	if( UnitLevel(frame.unitOwner) == GetMaxLevelForPlayerExpansion() or IsXPUserDisabled() or ( frame.unitOwner == "pet" and UnitExists("vehicle") ) ) then
+	if( UnitLevel(frame.unitOwner) == GetMaxPlayerLevel() or IsXPUserDisabled() or ( frame.unitOwner == "pet" and UnitExists("vehicle") ) ) then
 		frame.xpBar.xp:Hide()
 		return
 	end
