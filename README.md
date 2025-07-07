@@ -8,19 +8,11 @@ This is **ONLY** for Mists
 
 I take no credit in the creation/updates to SUF, this is just a fan fix for SUF
 
-**To Download**
-Hit Code and Download Zip, Only the **ShadoedUF_Options & ShadowedUnitFrames** folders should be put into the Interface/Addons folder
-
-7/6 update: Back to drawing board. Looks like majority of the code is retail based. I currently have these working 100%
-
+7/6 update: Version 5.5.0 should have these all fixed, Please let me know of any other issues that arise 
 Affliction Warlock Soul Shards
 Destruction Warlock Burning Embers
 Monk Chi
-Monk Stagger (mostly)
-
-Working but some text issues
+Monk Stagger
 Warlock Demonic Fury
-Druid Eclipse
-
-In Progress
-Priest Shadow Orbs - *note to self make sure to actually name the CORRECT POWER!* - 100% working now
+Druid Eclipse - Working and bar updates when at max Moon & Sun no in-between atm
+Priest Shadow Orbs
