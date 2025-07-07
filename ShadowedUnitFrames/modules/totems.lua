@@ -2,9 +2,27 @@ local Totems = {}
 local totemColors = {}
 local MAX_TOTEMS = MAX_TOTEMS
 
--- Death Knights untalented ghouls are guardians and are considered totems........... so set it up for them
 local playerClass = select(2, UnitClass("player"))
-ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Totem bar"], true, "SHAMAN")
+if( playerClass == "DEATHKNIGHT" ) then
+	MAX_TOTEMS = 1
+	-- Unholy DKs get rank 2 on level 29 which converts their ghoul into a proper pet.
+	local spec = (UnitLevel("player") < 29) and {1, 2, 3} or {1, 2}
+	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Ghoul bar"], true, "DEATHKNIGHT", spec, 12)
+elseif( playerClass == "DRUID" ) then
+	MAX_TOTEMS = 1
+	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Mushroom bar"], true, "DRUID", 4, 39)
+elseif( playerClass == "MONK" ) then
+	MAX_TOTEMS = 1
+	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Statue bar"], true, "MONK", {1, 2}, 35)
+elseif( playerClass == "MAGE" ) then
+	MAX_TOTEMS = 1
+	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Rune of Power bar"], true, "MAGE", {1, 2, 3}, 30)
+-- elseif( playerClass == "WARLOCK" ) then
+	-- MAX_TOTEMS = 2
+	-- ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Imp & Dreadstalker bar"], true, "WARLOCK", 2)
+else
+	ShadowUF:RegisterModule(Totems, "totemBar", ShadowUF.L["Totem bar"], true, "SHAMAN")
+end
 
 ShadowUF.BlockTimers:Inject(Totems, "TOTEM_TIMER")
 ShadowUF.DynamicBlocks:Inject(Totems)
@@ -19,7 +37,7 @@ function Totems:OnEnable(frame)
 		frame.totemBar.totems = {}
 		frame.totemBar.blocks = frame.totemBar.totems
 
-		local priorities = SHAMAN_TOTEM_PRIORITIES
+		local priorities = (playerClass == "SHAMAN") and SHAMAN_TOTEM_PRIORITIES or STANDARD_TOTEM_PRIORITIES
 
 		for id=1, MAX_TOTEMS do
 			local totem = ShadowUF.Units:CreateBar(frame.totemBar)
@@ -37,13 +55,27 @@ function Totems:OnEnable(frame)
 			table.insert(frame.totemBar.totems, totem)
 		end
 
-		totemColors[1] = {r = 1, g = 0, b = 0.4}
-		totemColors[2] = {r = 0, g = 1, b = 0.4}
-		totemColors[3] = {r = 0, g = 0.4, b = 1}
-		totemColors[4] = {r = 0.90, g = 0.90, b = 0.90}
+		if( playerClass == "DEATHKNIGHT" ) then
+			totemColors[1] = ShadowUF.db.profile.classColors.PET
+		elseif( playerClass == "DRUID" ) then
+			totemColors[1] = ShadowUF.db.profile.powerColors.MUSHROOMS
+		-- elseif( playerClass == "WARLOCK" ) then
+			-- totemColors[1] = ShadowUF.db.profile.classColors.PET
+			-- totemColors[2] = ShadowUF.db.profile.classColors.PET
+		elseif( playerClass == "MONK" ) then
+			totemColors[1] = ShadowUF.db.profile.powerColors.STATUE
+		elseif( playerClass == "MAGE" ) then
+			totemColors[1] = ShadowUF.db.profile.powerColors.RUNEOFPOWER
+		else
+			totemColors[1] = {r = 1, g = 0, b = 0.4}
+			totemColors[2] = {r = 0, g = 1, b = 0.4}
+			totemColors[3] = {r = 0, g = 0.4, b = 1}
+			totemColors[4] = {r = 0.90, g = 0.90, b = 0.90}
+		end
 	end
 
 	frame:RegisterNormalEvent("PLAYER_TOTEM_UPDATE", self, "Update")
+	frame:RegisterUpdateFunc(self, "UpdateVisibility")
 	frame:RegisterUpdateFunc(self, "Update")
 end
 
@@ -107,13 +139,25 @@ local function totemMonitor(self, elapsed)
 		self:SetScript("OnUpdate", nil)
 		self.endTime = nil
 
-		if( MAX_TOTEMS == 1 ) then
+		if( not self.parent.inVehicle and MAX_TOTEMS == 1 ) then
 			ShadowUF.Layout:SetBarVisibility(self.parent, "totemBar", false)
 		end
 	end
 
 	if( self.fontString ) then
 		self.fontString:UpdateTags()
+	end
+end
+
+function Totems:UpdateVisibility(frame)
+	if( frame.totemBar.inVehicle ~= frame.inVehicle ) then
+		frame.totemBar.inVehicle = frame.inVehicle
+
+		if( frame.inVehicle ) then
+			ShadowUF.Layout:SetBarVisibility(frame, "totemBar", false)
+		elseif( MAX_TOTEMS ~= 1 ) then
+			self:Update(frame)
+		end
 	end
 end
 
@@ -141,11 +185,6 @@ function Totems:Update(frame)
 			indicator:SetValue(indicator.endTime - GetTime())
 			indicator:SetScript("OnUpdate", totemMonitor)
 			indicator:SetAlpha(1.0)
-			frame:SetBlockColor(indicator,
-								"totemBar",
-								totemColors[indicator.id].r,
-								totemColors[indicator.id].g,
-								totemColors[indicator.id].b)
 
 			totalActive = totalActive + 1
 
@@ -159,6 +198,13 @@ function Totems:Update(frame)
 
 		if( indicator.fontString ) then
 			indicator.fontString:UpdateTags()
+		end
+	end
+
+	if( not frame.inVehicle ) then
+		-- Guardian timers always auto hide or if it's flagged to not always be shown
+		if( MAX_TOTEMS == 1 or not ShadowUF.db.profile.units[frame.unitType].totemBar.showAlways ) then
+			ShadowUF.Layout:SetBarVisibility(frame, "totemBar", totalActive > 0)
 		end
 	end
 end

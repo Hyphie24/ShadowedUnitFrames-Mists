@@ -1,20 +1,25 @@
-## Interface: 40400
+## Interface: 110105, 110107, 110200, 50500
 ## Title: Shadowed Unit Frames
 ## Notes: Moooooooooooooooooo
 ## Author: Shadowed
-## Version: v4.3.5-classic
+## Version: v4.4.9
 ## SavedVariables: ShadowedUFDB
 ## X-Website: https://www.wowace.com/addons/shadowed-unit-frames/
-## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibSpellRange-1.0, LibClassicDurations, Clique, LibClassicCasterino
+## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibDualSpec-1.0, LibSpellRange-1.0, LibClassicDurations, Clique, LibClassicCasterino
 ## X-Curse-Project-ID: 19268
 ## X-WoWI-ID: 13494
+## Category: ShadowedUnitFrames
 
 #@no-lib-strip@
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 libs\LibSharedMedia-3.0\lib.xml
 libs\AceDB-3.0\AceDB-3.0.xml
+libs\LibDualSpec-1.0\LibDualSpec-1.0.lua
 libs\LibSpellRange-1.0\lib.xml
+libs\UTF8\utf8.lua
+libs\LibClassicDurations\LibClassicDurations.xml
+libs\LibClassicCasterino\LibClassicCasterino.lua
 #@end-no-lib-strip@
 
 localization\enUS.lua
@@ -41,19 +46,33 @@ modules\health.lua
 modules\power.lua
 modules\portrait.lua
 modules\indicators.lua
-modules\incheal.lua
 modules\xp.lua
 modules\cast.lua
 modules\auras.lua
 modules\auraindicators.lua
 modules\combattext.lua
 modules\totems.lua
+modules\runes.lua
 modules\fader.lua
 modules\basecombopoints.lua
 modules\combopoints.lua
+modules\incheal.lua
+modules\incabsorb.lua
+modules\healabsorb.lua
 modules\range.lua
 modules\empty.lua
 modules\druid.lua
-modules\runes.lua
-modules\holypower.lua
+modules\eclipse.lua
 modules\soulshards.lua
+modules\holypower.lua
+modules\chi.lua
+modules\altpower.lua
+modules\monkstagger.lua
+modules\aurapoints.lua
+modules\priest.lua
+modules\shaman.lua
+modules\arcanecharges.lua
+modules\essence.lua
+modules\burningembers.lua
+modules\shadoworbs.lua
+modules\demonicfury.lua
