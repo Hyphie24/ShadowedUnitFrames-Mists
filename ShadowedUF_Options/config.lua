@@ -1307,6 +1307,13 @@ local function loadGeneralOptions()
 								arg = "powerColors.RUNEOFPOWER",
 								hidden = function(info) return select(2, UnitClass("player")) ~= "MAGE" end,
 							},
+							POWER_TYPE_FEL_ENERGY = {
+								order = 18,
+								type = "color",
+								name = L["Fel Energy"],
+								arg = "powerColors.POWER_TYPE_FEL_ENERGY",
+								hidden = function(info) return select(2, UnitClass("player")) ~= "WARLOCK" end,
+							},
 							ALTERNATE = {
 								order = 19,
 								type = "color",
@@ -3214,7 +3221,7 @@ local function loadUnitOptions()
 						order = 4,
 						type = "group",
 						inline = true,
-						name = L["Holy Power"],
+						name = L["Shadow Orbs"],
 						hidden = function(info) if( info[2] == "global" or getVariable(info[2], "shadowOrbs", nil, "isBar") ) then return true end return hideRestrictedOption(info) end,
 						args = {
 							enabled = {
@@ -4205,40 +4212,40 @@ local function loadUnitOptions()
 								hidden = hideRestrictedOption,
 								arg = "runeBar.enabled",
 							},
-							-- eclipseBar = {
-								-- order = 1.25,
-								-- type = "toggle",
-								-- name = string.format(L["Enable %s"], L["Eclipse bar"]),
-								-- desc = L["Adds eclipse bars and how far into sun or moon eclipse is."],
-								-- hidden = hideRestrictedOption,
-								-- arg = "eclipseBar.enabled",
-							-- },
-							-- demonicFuryBar = {
-								-- order = 1.25,
-								-- type = "toggle",
-								-- name = string.format(L["Enable %s"], L["Demonic Fury bar"]),
-								-- desc = L["Adds a Demonic Fury bar for Demonology Warlocks."],
-								-- hidden = hideRestrictedOption,
-								-- arg = "demonicFuryBar.enabled",
-							-- },
-							-- burningEmbersBar = {
-								-- order = 1.25,
-								-- type = "toggle",
-								-- name = string.format(L["Enable %s"], L["Burning Embers bar"]),
-								-- desc = L["Adds a Burning Embers bar for Destruction Warlocks."],
-								-- hidden = hideRestrictedOption,
-								-- arg = "burningEmbersBar.enabled",
-							-- },
-							-- totemBar = {
-								-- order = 1.5,
-								-- type = "toggle",
-								-- name = string.format(L["Enable %s"], ShadowUF.modules.totemBar.moduleName),
-								-- desc = function(info)
-									-- return select(2, UnitClass("player")) == "SHAMAN" and L["Adds totem bars with timers before they expire to the player frame."] or select(2, UnitClass("player")) == "DEATHKNIGHT" and L["Adds a bar indicating how much time is left on your ghoul timer, only used if you do not have a permanent ghoul."] or L["Adds a bar indicating how much time is left on your mushrooms."]
-								-- end,
-								-- hidden = hideRestrictedOption,
-								-- arg = "totemBar.enabled",
-							-- },
+							eclipseBar = {
+								order = 1.25,
+								type = "toggle",
+								name = string.format(L["Enable %s"], L["Eclipse bar"]),
+								desc = L["Adds eclipse bars and how far into sun or moon eclipse is."],
+								hidden = hideRestrictedOption,
+								arg = "eclipseBar.enabled",
+							},
+							demonicFuryBar = {
+								order = 1.25,
+								type = "toggle",
+								name = string.format(L["Enable %s"], L["Demonic Fury bar"]),
+								desc = L["Adds a Demonic Fury bar for Demonology Warlocks."],
+								hidden = hideRestrictedOption,
+								arg = "demonicFuryBar.enabled",
+							},
+							burningEmbersBar = {
+								order = 1.25,
+								type = "toggle",
+								name = string.format(L["Enable %s"], L["Burning Embers bar"]),
+								desc = L["Adds a Burning Embers bar for Destruction Warlocks."],
+								hidden = hideRestrictedOption,
+								arg = "burningEmbersBar.enabled",
+							},
+							totemBar = {
+								order = 1.5,
+								type = "toggle",
+								name = string.format(L["Enable %s"], ShadowUF.modules.totemBar.moduleName),
+								desc = function(info)
+									return select(2, UnitClass("player")) == "SHAMAN" and L["Adds totem bars with timers before they expire to the player frame."] or select(2, UnitClass("player")) == "DEATHKNIGHT" and L["Adds a bar indicating how much time is left on your ghoul timer, only used if you do not have a permanent ghoul."] or L["Adds a bar indicating how much time is left on your mushrooms."]
+								end,
+								hidden = hideRestrictedOption,
+								arg = "totemBar.enabled",
+							},
 							staggerBar = {
 								order = 1.25,
 								type = "toggle",

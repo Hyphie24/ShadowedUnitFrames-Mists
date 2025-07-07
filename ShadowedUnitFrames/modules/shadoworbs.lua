@@ -1,7 +1,7 @@
 if( not ShadowUF.ComboPoints ) then return end
 local ShadowOrbs = setmetatable({}, {__index = ShadowUF.ComboPoints})
 ShadowUF:RegisterModule(ShadowOrbs, "shadowOrbs", ShadowUF.L["Shadow Orbs"], nil, "PRIEST", SPEC_PRIEST_SHADOW, SHADOW_ORBS_SHOW_LEVEL)
-local shadowConfig = {max = 3, key = "shadowOrbs", colorKey = "SHADOWORBS", powerType = Enum.PowerType.SoulShards, eventType = "SHADOW_ORBS", icon = "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\shard"}
+local shadowConfig = {max = 3, key = "shadowOrbs", colorKey = "SHADOWORBS", powerType = Enum.PowerType.ShadowOrbs, eventType = "SHADOW_ORBS", icon = "Interface\\AddOns\\ShadowedUnitFrames\\media\\textures\\shard"}
 
 function ShadowOrbs:OnEnable(frame)
 	frame.shadowOrbs = frame.shadowOrbs or CreateFrame("Frame", nil, frame)
