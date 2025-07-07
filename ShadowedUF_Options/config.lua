@@ -615,6 +615,16 @@ local function loadGeneralOptions()
 									layout.units[unit] = nil
 								end
 							end
+							if( not layoutData.modules ) then
+								local validModules = {["healthBar"] = true, ["powerBar"] = true, ["portrait"] = true, ["range"] = true, ["text"] = true, ["indicators"] = true, ["auras"] = true, ["incAbsorb"] = true, ["healAbsorb"] = true, ["incHeal"] = true, ["castBar"] = true, ["combatText"] = true, ["highlight"] = true, ["runeBar"] = true, ["totemBar"] = true, ["xpBar"] = true, ["fader"] = true, ["comboPoints"] = true, ["eclipseBar"] = true, ["soulShards"] = true, ["holyPower"] = true, ["altPowerBar"] = true, ["demonicFuryBar"] = true, ["burningEmbersBar"] = true, ["chi"] = true, ["shadowOrbs"] = true, ["auraPoints"] = true, ["staggerBar"] = true}
+								for _, unitData in pairs(layout.units) do
+									for key, data in pairs(unitData) do
+										if( type(data) == "table" and not validModules[key] and ShadowUF.modules[key] ) then
+											unitData[key] = nil
+										end
+									end
+								end
+							end
 							-- Check if we need move over the visibility and positions info
 							layout.positions = layout.positions or CopyTable(ShadowUF.db.profile.positions)
 							layout.visibility = layout.visibility or CopyTable(ShadowUF.db.profile.positions)
@@ -1241,6 +1251,12 @@ local function loadGeneralOptions()
 								hasAlpha = true,
 								arg = "powerColors.BANKEDHOLYPOWER",
 								hidden = function(info) return select(2, UnitClass("player")) ~= "PALADIN" end,
+							},
+							SOULSHARDS = {
+								order = 14,
+								type = "color",
+								name = L["Soul Shards"],
+								hasAlpha = true,
 								arg = "powerColors.SOULSHARDS",
 								hidden = function(info) return select(2, UnitClass("player")) ~= "WARLOCK" end,
 							},
@@ -1281,20 +1297,6 @@ local function loadGeneralOptions()
 								arg = "powerColors.CHI",
 								hidden = function(info) return select(2, UnitClass("player")) ~= "MONK" end,
 							},
-							FURY = {
-								order = 17,
-								type = "color",
-								name = L["Fury"],
-								arg = "powerColors.FURY",
-								hidden = function(info) return select(2, UnitClass("player")) ~= "DEMONHUNTER" end,
-							},
-							PAIN = {
-								order = 17,
-								type = "color",
-								name = L["Pain"],
-								arg = "powerColors.PAIN",
-								hidden = function(info) return select(2, UnitClass("player")) ~= "DEMONHUNTER" end,
-							},
 							LUNAR_POWER = {
 								order = 17,
 								type = "color",
@@ -1322,13 +1324,6 @@ local function loadGeneralOptions()
 								name = L["Rune of Power"],
 								arg = "powerColors.RUNEOFPOWER",
 								hidden = function(info) return select(2, UnitClass("player")) ~= "MAGE" end,
-							},
-							POWER_TYPE_FEL_ENERGY = {
-								order = 18,
-								type = "color",
-								name = L["Fel Energy"],
-								arg = "powerColors.POWER_TYPE_FEL_ENERGY",
-								hidden = function(info) return select(2, UnitClass("player")) ~= "WARLOCK" end,
 							},
 							ALTERNATE = {
 								order = 19,
@@ -4214,7 +4209,7 @@ local function loadUnitOptions()
 						hidden = function(info)
 							local unit = info[2]
 							if( unit == "global" ) then
-								return not globalConfig.runeBar and not globalConfig.eclipseBar and not globalConfig.totemBar and not globalConfig.druidBarglobalConfig.monkBar and not globalConfig.xpBar and not globalConfig.demonicFuryBar and not globalConfig.burningEmbersBar and not globalConfig.xpBar and not globalConfig.staggerBar
+								return not globalConfig.runeBar and not globalConfig.eclipseBar and not globalConfig.totemBar and not globalConfig.druid and not BarglobalConfig.monkBar and not globalConfig.xpBar and not globalConfig.demonicFuryBar and not globalConfig.burningEmbersBar and not globalConfig.staggerBar
 							else
 								return unit ~= "player" and unit ~= "pet"
 							end
