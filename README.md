@@ -7,13 +7,12 @@
 This is **ONLY** for Cata/Mists Classic
 
 I take no credit in the creation/updates to SUF, this is just a fan fix for SUF
-7/7 update: Balance druid Eclipse bar now working as intended (at least on PTR) looking into another possible issue and will push that update then
-This will most likely be last push unless something drastic breaks
-7/6 update: Version 5.5.0 should have these all fixed, Please let me know of any other issues that arise 
-- Affliction Warlock Soul Shards Bar
-- Destruction Warlock Burning Embers Bar
-- Monk Chi Bar
-- Brewmaster Monk Stagger Bar
-- Demonology Warlock Demonic Fury Bar
-- Druid Eclipse Bar - Working and bar updates when at max Moon & Sun no in-between atm
-- Priest Shadow Orbs Bar
+7/8 Update:
+Known issues:
+
+- Eclipse Power bar & Demonic Fury power bar will list 2 sets of texts in the text setting for adding in power values to the power bar, this is a bug and sadly no way to fix it (as of now) it is blank so it shouldn't add any text. If it does please submit an issue on it and I'll look into again (I tested for hours adding and deleting text and it didn't duplicate but who knows ¯_(ツ)_/¯
+- Holy Power (is this a thing in MoP?) if not just uncheck in the player config for paladin
+- If you see lots of "Text" under Demonic Fury/Eclipse bar/Rune bar/Totem bar etc, this was a bug with the previous version that kept duplication text for those bars. Only fix I know is to do a profile reset. If you do not want to do this (I don't blame you) just go to each "Text" frame and delete the text there. It should (in theory) save and will be a non issue
+Huge thank you to Jordan466 & others who have posted issues, I'm limited to mostly PTR as I don't play classic much if at all
+
+*hopefully everything is correct and I didn't do anything else dumb*
