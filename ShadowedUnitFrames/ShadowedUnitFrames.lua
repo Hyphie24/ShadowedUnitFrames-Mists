@@ -346,7 +346,6 @@ function ShadowUF:CheckUpgrade()
 		end
 	end
 	if( revisionClassic <= 19 ) then
-		self.db.profile.units.pet.altPowerBar.enabled = true
 		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Demonic Power"], text = "", anchorTo = "$demonicFuryBar", anchorPoint = "C", x = 3, y = 0, size = -1})
 		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Eclipse Power"], text = "", anchorTo = "$eclipseBar", anchorPoint = "C", size = 0, x = 0, y = 0})
 		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "", anchorTo = "$runeBar", anchorPoint = "C", size = 0, x = 0, y = 0})
@@ -597,11 +596,6 @@ function ShadowUF:LoadUnitDefaults()
 				{enabled = true, name = L["Right text"], text = "[curmaxpp]", anchorPoint = "CRI", anchorTo = "$powerBar", width = 0.60, size = 0, x = -3, y = 0, default = true},
 				{enabled = true, name = L["Left text"], text = "", anchorTo = "$emptyBar", anchorPoint = "CLI", width = 0.50, size = 0, x = 3, y = 0, default = true},
 				{enabled = true, name = L["Right text"], text = "", anchorTo = "$emptyBar", anchorPoint = "CRI", width = 0.60, size = 0, x = -3, y = 0, default = true},
-				-- {enabled = true, width = 1, name = L["Demonic Power Left"], text = "", anchorTo = "$demonicFuryBar", anchorPoint = "CLI", x = 3, y = 0, size = -1, default = true},
-				-- {enabled = true, width = 1, name = L["Eclipse Power Left"], text = "", anchorTo = "$eclipseBar", anchorPoint = "CLI", size = 0, x = 0, y = 0, default = true},
-				-- {enabled = true, width = 1, name = L["Timer Text Left"], text = "", anchorTo = "$totemBar", anchorPoint = "CLI", x = 0, y = 0, size = 0, default = true},
-				-- {enabled = true, width = 1, name = L["Timer Text Left"], text = "", anchorTo = "$runeBar", anchorPoint = "CLI", size = 0, x = 0, y = 0, default = true},
-				-- {enabled = true, width = 1, name = L["Stagger Power Left"], text = "", anchorTo = "$staggerBar", anchorPoint = "CLI", size = 0, x = 0, y = 0, default = true},
 				['*'] = {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0},
 			},
 			indicators = {raidTarget = {enabled = true, size = 0}},
