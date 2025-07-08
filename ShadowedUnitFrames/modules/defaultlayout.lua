@@ -255,6 +255,11 @@ function ShadowUF:LoadDefaultLayout(useMerge)
 
 			{width = 0.50, name = L["Left text"], anchorTo = "$emptyBar", anchorPoint = "CLI", x = 3, y = 0, size = 0, default = true},
 			{width = 0.60, name = L["Right text"], anchorTo = "$emptyBar", anchorPoint = "CRI", x = -3, y = 0, size = 0, default = true},
+			{width = 1, name = L["Demonic Power"], anchorTo = "$demonicFuryBar", anchorPoint = "C", x = 3, y = 0, size = -1, default = true},
+			{width = 1, name = L["Eclipse Power"], anchorTo = "$eclipseBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true},
+			{width = 1, name = L["Timer Text"], anchorTo = "$runeBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true},
+			{width = 1, name = L["Timer Text"], anchorTo = "$totemBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true},
+			{width = 1, name = L["Stagger Power"], anchorTo = "$staggerBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true},
 		},
 		indicators = {
 			raidTarget = {anchorTo = "$parent", anchorPoint = "C", size = 20, x = 0, y = 0},
@@ -385,13 +390,6 @@ function ShadowUF:LoadDefaultLayout(useMerge)
 				{text = "[perpp]"},
 				{text = "[curmaxpp]"},
 				{text = "[(()afk() )][name][( ()group())]"},
-				-- {enabled = true, width = 1, name = L["Text"], text = "[warlock:demonic:curpp]", anchorTo = "$demonicFuryBar", anchorPoint = "C", x = 3, y = 0, size = -1},
-																																											   
-				-- {enabled = true, width = 1, name = L["Text"], text = "[druid:eclipse]", anchorTo = "$eclipseBar", anchorPoint = "CLI", size = 0, x = 0, y = 0},
-				{text = ""},
-				{enabled = true, width = 1, name = L["Timer Text"], text = "[totem:timer]", anchorTo = "$totemBar", anchorPoint = "C", x = 0, y = 0, size = 0, default = true, block = true},
-				{enabled = true, width = 1, name = L["Timer Text"], text = "[rune:timer]", anchorTo = "$runeBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true, block = true},
-				{enabled = true, width = 1, name = L["Text"], text = "[monk:abs:stagger]", anchorTo = "$staggerBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true}
 			},
 		},
 		party = {

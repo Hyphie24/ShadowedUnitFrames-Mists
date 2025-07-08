@@ -220,23 +220,6 @@ function ShadowUF:CheckUpgrade()
 		end
 	end
 
-	if( revisionClassic <= 39 ) then
-		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[monk:abs:stagger]", anchorTo = "$staggerBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
-	end
-
-	if( revisionClassic <= 38 ) then
-		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "", anchorTo = "$runeBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true, block = true})
-		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "", anchorTo = "$totemBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true, block = true})
-
-		for _, config in pairs(self.db.profile.units) do
-			for id, text in pairs(config.text) do
-				if( id <= 5 ) then
-					text.default = true
-				end
-			end
-		end
-	end
-
 	if( revisionClassic <= 37 ) then
 		self.db.profile.healthColors.healAbsorb = {r = 0.68, g = 0.47, b = 1}
 	end
@@ -325,12 +308,9 @@ function ShadowUF:CheckUpgrade()
 		end
 	end
 
-	if( revisionClassic <= 25 ) then
-		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[druid:eclipse]", anchorTo = "$eclipseBar", anchorPoint = "CLI", size = -1, x = 0, y = 0, default = true})
-		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[priest:shadoworbs]", anchorTo = "$shadowOrbsBar", anchorPoint = "CLI", size = -1, x = 0, y = 0, default = true})
-
-	end
-
+	-- if( revisionClassic <= 25 ) then
+		-- table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Eclipse Power"], text = "[druid:balance]", anchorTo = "$eclipseBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true})
+	-- end
 	if( revisionClassic <= 24 ) then
 		self.db.profile.powerColors.AURAPOINTS = {r = 1.0, g = 0.80, b = 0}
 		self.db.profile.units.player.auraPoints = {enabled = false, showAlways = true, anchorTo = "$parent", order = 60, anchorPoint = "BR", x = -3, y = 8, size = 14, spacing = -4, growth = "LEFT", isBar = true, height = 0.40}
@@ -365,12 +345,14 @@ function ShadowUF:CheckUpgrade()
 			self.db.profile.units[unit].altPowerBar.order = 100
 		end
 	end
-	
 	if( revisionClassic <= 19 ) then
 		self.db.profile.units.pet.altPowerBar.enabled = true
-		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Text"], text = "[warlock:demonic:curpp]", anchorTo = "$demonicFuryBar", anchorPoint = "C", size = -1, x = 0, y = 0})
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Demonic Power"], text = "", anchorTo = "$demonicFuryBar", anchorPoint = "C", x = 3, y = 0, size = -1})
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Eclipse Power"], text = "", anchorTo = "$eclipseBar", anchorPoint = "C", size = 0, x = 0, y = 0})
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "", anchorTo = "$runeBar", anchorPoint = "C", size = 0, x = 0, y = 0})
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "", anchorTo = "$totemBar", anchorPoint = "C", size = 0, x = 0, y = 0})
+		table.insert(self.db.profile.units.player.text, {enabled = true, width = 1, name = L["Stagger Power"], text = "", anchorTo = "$staggerBar", anchorPoint = "C", size = 0, x = 0, y = 0})
 	end
-
 	if( revisionClassic <= 18 ) then
 		self.db.profile.powerColors["MUSHROOMS"] = {r = 0.20, g = 0.90, b = 0.20}
 		self.db.profile.powerColors["STATUE"] = {r = 0.35, g = 0.45, b = 0.60}
@@ -403,7 +385,6 @@ function ShadowUF:CheckUpgrade()
 
 		self.db.profile.units.player.chi = {anchorTo = "$parent", order = 60, height = 0.40, anchorPoint = "BR", x = -3, y = 6, size = 14, spacing = -4, growth = "LEFT", isBar = true, showAlways = true}
 	end
-
 	if( revisionClassic <= 13 ) then
 		self.db.profile.powerColors["BANKEDHOLYPOWER"] = {r = 0.96, g = 0.61, b = 0.84}
 	end
@@ -443,9 +424,6 @@ function ShadowUF:CheckUpgrade()
 			if text and text.anchorTo == "$runeBar" and text == "[rune:timer]" then
 				hasRuneText = true
 			end
-		end
-		if not hasRuneText then
-			table.insert(config.player.text, {enabled = true, width = 1, name = L["Timer Text"], text = "[rune:timer]", anchorTo = "$runeBar", anchorPoint = "C", size = 0, x = 0, y = 0, default = true, block = true})
 		end
 	end
 	if( revisionClassic <= 4 or not self.db.profile.revisionClassic ) then
@@ -546,16 +524,16 @@ end
 		end
 	end
 
-	-- if( revision <= 15 ) then
-		-- self.db.profile.powerColors["DEMONICFURY"] = {r = 0.58, g = 0.51, b = 0.79}
-		-- self.db.profile.powerColors["BURNINGEMBERS"] = {r = 0.58, g = 0.51, b = 0.79}
-		-- self.db.profile.powerColors["FULLBURNINGEMBER"] = {r = 0.88, g = 0.09, b = 0.062}
-		-- self.db.profile.powerColors["SHADOWORBS"] = {r = 0.58, g = 0.51, b = 0.79}
+	if( revisionClassic <= 15 ) then
+		self.db.profile.powerColors["DEMONICFURY"] = {r = 0.58, g = 0.51, b = 0.79}
+		self.db.profile.powerColors["BURNINGEMBERS"] = {r = 0.58, g = 0.51, b = 0.79}
+		self.db.profile.powerColors["FULLBURNINGEMBER"] = {r = 0.88, g = 0.09, b = 0.062}
+		self.db.profile.powerColors["SHADOWORBS"] = {r = 0.58, g = 0.51, b = 0.79}
 
-		-- self.db.profile.units.player.shadowOrbs = {anchorTo = "$parent", order = 60, height = 0.40, anchorPoint = "BR", x = -3, y = 6, size = 14, spacing = -4, growth = "LEFT", isBar = true, showAlways = true}
-		-- self.db.profile.units.player.burningEmbersBar = {enabled = true, background = false, height = 0.40, order = 70}
-		-- self.db.profile.units.player.demonicFuryBar = {enabled = true, background = false, height = 0.40, order = 70}
-	-- end		
+		self.db.profile.units.player.shadowOrbs = {anchorTo = "$parent", order = 60, height = 0.40, anchorPoint = "BR", x = -3, y = 6, size = 14, spacing = -4, growth = "LEFT", isBar = true, showAlways = true}
+		self.db.profile.units.player.burningEmbersBar = {enabled = true, background = false, height = 0.40, order = 70}
+		self.db.profile.units.player.demonicFuryBar = {enabled = true, background = false, height = 0.40, order = 70}
+	end		
 end
 
 local function zoneEnabled(zone, zoneList)
@@ -619,6 +597,11 @@ function ShadowUF:LoadUnitDefaults()
 				{enabled = true, name = L["Right text"], text = "[curmaxpp]", anchorPoint = "CRI", anchorTo = "$powerBar", width = 0.60, size = 0, x = -3, y = 0, default = true},
 				{enabled = true, name = L["Left text"], text = "", anchorTo = "$emptyBar", anchorPoint = "CLI", width = 0.50, size = 0, x = 3, y = 0, default = true},
 				{enabled = true, name = L["Right text"], text = "", anchorTo = "$emptyBar", anchorPoint = "CRI", width = 0.60, size = 0, x = -3, y = 0, default = true},
+				-- {enabled = true, width = 1, name = L["Demonic Power Left"], text = "", anchorTo = "$demonicFuryBar", anchorPoint = "CLI", x = 3, y = 0, size = -1, default = true},
+				-- {enabled = true, width = 1, name = L["Eclipse Power Left"], text = "", anchorTo = "$eclipseBar", anchorPoint = "CLI", size = 0, x = 0, y = 0, default = true},
+				-- {enabled = true, width = 1, name = L["Timer Text Left"], text = "", anchorTo = "$totemBar", anchorPoint = "CLI", x = 0, y = 0, size = 0, default = true},
+				-- {enabled = true, width = 1, name = L["Timer Text Left"], text = "", anchorTo = "$runeBar", anchorPoint = "CLI", size = 0, x = 0, y = 0, default = true},
+				-- {enabled = true, width = 1, name = L["Stagger Power Left"], text = "", anchorTo = "$staggerBar", anchorPoint = "CLI", size = 0, x = 0, y = 0, default = true},
 				['*'] = {enabled = true, text = "", anchorTo = "", anchorPoint = "C", size = 0, x = 0, y = 0},
 			},
 			indicators = {raidTarget = {enabled = true, size = 0}},
