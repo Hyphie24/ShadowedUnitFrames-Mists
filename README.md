@@ -1,6 +1,6 @@
 ***NOT AN OFFICIAL SUF UPDATE***
 
-***Loads and works, but not all forms of power tracking working***
+***All power tracking should be working, Elipse Bar, Demonic Fury, Chi, Soul Shards, Shadow Orbs, DK Runes***
 
 ***This will 100% be removed at the request of the original addon author(s)***
 
