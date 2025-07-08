@@ -6,7 +6,7 @@ ShadowUF = select(2, ...)
 
 local L = ShadowUF.L
 ShadowUF.dbRevision = 63
---ShadowUF.dbRevisionClassic = 61
+ShadowUF.dbRevisionClassic = 61
 ShadowUF.playerUnit = "player"
 ShadowUF.enabledUnits = {}
 ShadowUF.modules = {}
