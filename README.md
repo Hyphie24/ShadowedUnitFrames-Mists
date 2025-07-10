@@ -9,9 +9,9 @@
 This is **ONLY** for Cata/Mists Classic
 
 I take no credit in the creation/updates to SUF, this is just a fan fix for SUF
-7/9 update: last version 5.5.05 will be uploaded tonight, this *hopefully* be the final full release for MoP classic
+- 7/10 update: last version 5.5.05 will be uploaded tonight, this *hopefully* be the final full release for MoP classic
 
-7/8 Update:
+- 7/8 Update:
 Known issues:
 
 - Eclipse Power bar & Demonic Fury power bar will list 2 sets of texts in the text setting for adding in power values to the power bar, this is a bug and sadly no way to fix it (as of now) it is blank so it shouldn't add any text. If it does please submit an issue on it and I'll look into again (I tested for hours adding and deleting text and it didn't duplicate but who knows ¯_(ツ)_/¯
