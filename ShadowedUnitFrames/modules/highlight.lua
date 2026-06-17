@@ -131,10 +131,18 @@ function Highlight:OnDisable(frame)
 	end
 end
 
+local fallbackDebuffTypeColor = {
+	none = {r = 0.80, g = 0, b = 0},
+	Magic = {r = 0.20, g = 0.60, b = 1.00},
+	Curse = {r = 0.60, g = 0, b = 1.00},
+	Disease = {r = 0.60, g = 0.40, b = 0},
+	Poison = {r = 0, g = 0.60, b = 0},
+}
+
 function Highlight:Update(frame)
 	local color
 	if( frame.highlight.hasDebuff ) then
-		color = DebuffTypeColor[frame.highlight.hasDebuff] or DebuffTypeColor[""]
+		color = DebuffTypeColor and (DebuffTypeColor[frame.highlight.hasDebuff] or DebuffTypeColor[""]) or fallbackDebuffTypeColor[frame.highlight.hasDebuff] or fallbackDebuffTypeColor.none
 	elseif( frame.highlight.hasThreat ) then
 		color = ShadowUF.db.profile.healthColors.hostile
 	elseif( frame.highlight.hasAttention ) then
