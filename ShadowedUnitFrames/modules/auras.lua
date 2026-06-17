@@ -6,6 +6,22 @@ local GetAuraDataByIndex = C_UnitAuras.GetAuraDataByIndex
 
 ShadowUF:RegisterModule(Auras, "auras", ShadowUF.L["Auras"])
 
+local fallbackDebuffTypeColor = {
+	none = {r = 0.80, g = 0, b = 0},
+	Magic = {r = 0.20, g = 0.60, b = 1.00},
+	Curse = {r = 0.60, g = 0, b = 1.00},
+	Disease = {r = 0.60, g = 0.40, b = 0},
+	Poison = {r = 0, g = 0.60, b = 0},
+}
+
+local function getDebuffTypeColor(auraType)
+	if( DebuffTypeColor ) then
+		return (auraType and DebuffTypeColor[auraType]) or DebuffTypeColor.none or fallbackDebuffTypeColor.none
+	end
+
+	return (auraType and fallbackDebuffTypeColor[auraType]) or fallbackDebuffTypeColor.none
+end
+
 function Auras:OnEnable(frame)
 	frame.auras = frame.auras or {}
 
@@ -545,7 +561,7 @@ local function renderAura(parent, frame, type, config, displayConfig, index, fil
 	if( isRemovable and not isFriendly and not ShadowUF.db.profile.auras.disableColor ) then
 		button.border:SetVertexColor(ShadowUF.db.profile.auraColors.removable.r, ShadowUF.db.profile.auraColors.removable.g, ShadowUF.db.profile.auraColors.removable.b)
 	elseif( ( not isFriendly or type == "debuffs" ) and not ShadowUF.db.profile.auras.disableColor ) then
-		local color = auraType and DebuffTypeColor[auraType] or DebuffTypeColor.none
+		local color = getDebuffTypeColor(auraType)
 		button.border:SetVertexColor(color.r, color.g, color.b)
 	else
 		button.border:SetVertexColor(0.60, 0.60, 0.60)

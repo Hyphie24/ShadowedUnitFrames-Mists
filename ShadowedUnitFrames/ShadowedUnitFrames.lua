@@ -1004,13 +1004,25 @@ end
 local active_hiddens = {}
 function ShadowUF:HideBlizzardFrames()
 	if( self.db.profile.hidden.cast and not active_hiddens.cast ) then
-		hideBlizzardFrames(true, CastingBarFrame, PetCastingBarFrame)
+		hideBlizzardFrames(true, PlayerCastingBarFrame, PetCastingBarFrame)
 	end
 
 	if( self.db.profile.hidden.party and not active_hiddens.party ) then
-		for i=1, MAX_PARTY_MEMBERS do
-			local name = "PartyMemberFrame" .. i
-			hideBlizzardFrames(false, _G[name], _G[name .. "HealthBar"], _G[name .. "ManaBar"])
+		if( PartyFrame ) then
+			hideBlizzardFrames(false, PartyFrame)
+			for memberFrame in PartyFrame.PartyMemberFramePool:EnumerateActive() do
+				if memberFrame.HealthBarContainer and memberFrame.HealthBarContainer.HealthBar then
+					hideBlizzardFrames(false, memberFrame, memberFrame.HealthBarContainer.HealthBar, memberFrame.ManaBar)
+				else
+					hideBlizzardFrames(false, memberFrame, memberFrame.HealthBar, memberFrame.ManaBar)
+				end
+			end
+			PartyFrame.PartyMemberFramePool:ReleaseAll()
+		else
+			for i=1, MAX_PARTY_MEMBERS do
+				local name = "PartyMemberFrame" .. i
+				hideBlizzardFrames(false, _G[name], _G[name .. "HealthBar"], _G[name .. "ManaBar"])
+			end
 		end
 
 		-- This stops the compact party frame from being shown
